@@ -15,6 +15,7 @@ Visual Studio のソリューション（.sln / .slnx）を VS Code 用に変換
 - Windows
 - .NET 10.0 (WPF)
 - Visual Studio 2022 の MSBuild（MSBuildLocator で検出。必要に応じて既定パスを利用）
+- Velopack（初回インストールと自動更新に使用）
 
 ## 使い方
 1. アプリを起動します。
@@ -30,6 +31,12 @@ Visual Studio のソリューション（.sln / .slnx）を VS Code 用に変換
 ```
 dotnet build
 ```
+
+## Velopack 初回インストール / 自動更新
+- 起動時に Velopack のイベント処理を実行し、初回インストール時のショートカット作成などを行います。
+- 自動更新は `VELOPACK_UPDATE_URL` 環境変数が設定されている場合のみ有効になります。
+  - 例: `VELOPACK_UPDATE_URL=https://example.com/updates/`
+  - 更新が見つかった場合はダウンロード後にアプリが再起動されます。
 
 ## 注意事項
 - 既存の `.vscode` フォルダは削除して再作成されます。
