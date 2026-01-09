@@ -1,0 +1,12 @@
+# ビルド成果物
+bin/
+obj/
+
+# Visual Studio 作業ディレクトリ
+.vs/
+
+# ユーザー固有の設定
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
