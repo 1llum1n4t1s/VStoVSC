@@ -1,0 +1,41 @@
+name: リリース
+
+on:
+  push:
+    branches:
+      - releases
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: リリース作成と公開
+    runs-on: windows-latest
+    env:
+      APP_ID: VStoVSC
+      RELEASE_DIR: artifacts/release
+      PUBLISH_DIR: artifacts/publish
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: .NET SDK をセットアップ
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: 依存関係を復元
+        run: dotnet restore "VS to VSC.csproj"
+
+      - name: 発行
+        run: dotnet publish "VS to VSC.csproj" -c Release -r win-x64 --self-contained false -o "$env:PUBLISH_DIR"
+
+      - name: Velopack CLI をインストール
+        run: dotnet tool install --global vpk
+
+      - name: Velopack パッケージを作成
+        run: vpk pack --packId "$env:APP_ID" --packVersion "0.0.${{ github.run_number }}" --packDir "$env:PUBLISH_DIR" --outputDir "$env:RELEASE_DIR"
+
+      - name: GitHub Releases へアップロード
+        run: vpk upload github --repo "${{ github.repository }}" --releaseDir "$env:RELEASE_DIR" --token "${{ secrets.GITHUB_TOKEN }}"
