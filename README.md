@@ -32,6 +32,13 @@ Visual Studio のソリューション（.sln / .slnx）を VS Code 用に変換
 dotnet build
 ```
 
+## 公開手順（GitHub Actions）
+1. `releases` ブランチにコミットを push します。
+2. GitHub Actions が起動し、Velopack のリリース作成と GitHub Releases へのアップロードを行います。
+   - バージョンはワークフローの `run_number` を用いて `0.0.<run_number>` で自動付与されます。
+   - タグ作成はワークフロー内では行いません。
+3. `main` ブランチへの push では公開ワークフローは実行されません。
+
 ## Velopack 初回インストール / 自動更新
 - 起動時に Velopack のイベント処理を実行し、初回インストール時のショートカット作成などを行います。
 - 自動更新は `VELOPACK_UPDATE_URL` 環境変数が設定されている場合のみ有効になります。
