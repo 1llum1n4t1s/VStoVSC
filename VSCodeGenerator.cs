@@ -213,29 +213,34 @@ public partial class VSCodeGenerator
     /// <summary>
     /// MSBuildタスクを作成する
     /// </summary>
-    /// <param name="solutionName">ソリューションファイル名</param>
+    /// <param name="solutionName">ソリューション名</param>
+    /// <param name="solutionFileName">ソリューションファイル名（拡張子付き）</param>
     /// <param name="taskType">タスクタイプ（Build/Clean/Rebuild）</param>
     /// <param name="configuration">ビルド構成（Buildタスクの場合のみ）</param>
     /// <returns>タスクオブジェクト</returns>
-    private static object CreateMSBuildTask(string solutionName, string taskType, string? configuration = null)
+    private static object CreateMSBuildTask(
+        string solutionName,
+        string solutionFileName,
+        string taskType,
+        string? configuration = null)
     {
         var (label, args, detail, isDefault) = taskType switch
         {
             "Build" => (
                 $"ビルド - {solutionName} ソリューション - {configuration}",
-                new[] { $"{solutionName}.sln", $"/p:Configuration={configuration}", "/verbosity:normal" },
+                new[] { solutionFileName, $"/p:Configuration={configuration}", "/verbosity:normal" },
                 $"Visual Studio 2022 MSBuildを使用して{solutionName}ソリューション全体を{configuration}構成でビルド",
                 configuration == "Debug"
             ),
             "Clean" => (
                 $"クリーン - {solutionName} ソリューション",
-                new[] { $"{solutionName}.sln", "/t:Clean", "/verbosity:normal" },
+                new[] { solutionFileName, "/t:Clean", "/verbosity:normal" },
                 $"Visual Studio 2022 MSBuildを使用して{solutionName}ソリューション全体をクリーン",
                 false
             ),
             "Rebuild" => (
                 $"リビルド - {solutionName} ソリューション",
-                new[] { $"{solutionName}.sln", "/t:Rebuild", "/verbosity:normal" },
+                new[] { solutionFileName, "/t:Rebuild", "/verbosity:normal" },
                 $"Visual Studio 2022 MSBuildを使用して{solutionName}ソリューション全体をリビルド",
                 false
             ),
@@ -260,13 +265,14 @@ public partial class VSCodeGenerator
     /// </summary>
     /// <param name="vscodeDir">.vscodeディレクトリのパス</param>
     /// <param name="solutionName">ソリューション名</param>
-    public void GenerateTasksJson(string vscodeDir, string solutionName)
+    /// <param name="solutionFileName">ソリューションファイル名（拡張子付き）</param>
+    public void GenerateTasksJson(string vscodeDir, string solutionName, string solutionFileName)
     {
         List<object> tasks = [
-            CreateMSBuildTask(solutionName, "Build", "Debug"),
-            CreateMSBuildTask(solutionName, "Build", "Release"),
-            CreateMSBuildTask(solutionName, "Clean"),
-            CreateMSBuildTask(solutionName, "Rebuild")
+            CreateMSBuildTask(solutionName, solutionFileName, "Build", "Debug"),
+            CreateMSBuildTask(solutionName, solutionFileName, "Build", "Release"),
+            CreateMSBuildTask(solutionName, solutionFileName, "Clean"),
+            CreateMSBuildTask(solutionName, solutionFileName, "Rebuild")
         ];
 
         var tasksJson = new
@@ -289,6 +295,7 @@ public partial class VSCodeGenerator
     {
         var solutionDir = Path.GetDirectoryName(solutionPath)!;
         var solutionName = Path.GetFileNameWithoutExtension(solutionPath);
+        var solutionFileName = Path.GetFileName(solutionPath);
         var vscodeDir = Path.Combine(solutionDir, VSCodeDirectoryName);
 
         // 既存の.vscodeフォルダを削除して再作成
@@ -302,7 +309,7 @@ public partial class VSCodeGenerator
         LogMessage("新しい.vscodeフォルダを作成しました。");
 
         // tasks.jsonファイルを生成
-        GenerateTasksJson(vscodeDir, solutionName);
+        GenerateTasksJson(vscodeDir, solutionName, solutionFileName);
 
         LogMessage("VSCode設定ファイル生成が完了しました。");
     }
