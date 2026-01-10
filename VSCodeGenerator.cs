@@ -35,6 +35,11 @@ public partial class VSCodeGenerator
     private readonly Action<string> _logCallback;
 
     /// <summary>
+    /// 使用するMSBuildの実行パス
+    /// </summary>
+    private string _msbuildExecutablePath = MSBuildPath;
+
+    /// <summary>
     /// JSON シリアライゼーション用のオプション（キャッシュ用）
     /// </summary>
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -93,6 +98,8 @@ public partial class VSCodeGenerator
             {
                 HandleFallbackMSBuildSetup(instances);
             }
+
+            LogMessage($"使用するMSBuildパス: {_msbuildExecutablePath}");
         }
         catch (Exception ex)
         {
@@ -124,6 +131,7 @@ public partial class VSCodeGenerator
         Environment.SetEnvironmentVariable("VSINSTALLDIR", vsPath);
         Environment.SetEnvironmentVariable("VSToolsPath", Path.Combine(vsPath, VSToolsPathTemplate));
 
+        SetMSBuildExecutablePath(visualStudioInstance.MSBuildPath);
         LogMessage($"Visual Studio MSBuildインスタンスを登録: {vsPath}");
     }
 
@@ -136,6 +144,7 @@ public partial class VSCodeGenerator
         if (File.Exists(MSBuildPath))
         {
             SetupManualMSBuildEnvironment();
+            _msbuildExecutablePath = MSBuildPath;
             RegisterBestAvailableInstance(instances);
         }
         else
@@ -167,6 +176,7 @@ public partial class VSCodeGenerator
         if (bestInstance != null)
         {
             MSBuildLocator.RegisterInstance(bestInstance);
+            SetMSBuildExecutablePath(bestInstance.MSBuildPath);
             LogMessage($"最適なMSBuildインスタンスを登録: {bestInstance.Name}");
         }
         else
@@ -185,7 +195,27 @@ public partial class VSCodeGenerator
         {
             var instance = instances.OrderByDescending(x => x.Version).First();
             MSBuildLocator.RegisterInstance(instance);
+            SetMSBuildExecutablePath(instance.MSBuildPath);
             LogMessage($"最新のMSBuildインスタンスを登録: {instance.Name}");
+        }
+    }
+
+    /// <summary>
+    /// MSBuild実行パスを設定する
+    /// </summary>
+    /// <param name="msbuildPath">MSBuildパス</param>
+    private void SetMSBuildExecutablePath(string msbuildPath)
+    {
+        if (File.Exists(msbuildPath))
+        {
+            _msbuildExecutablePath = msbuildPath;
+            return;
+        }
+
+        var candidate = Path.Combine(msbuildPath, "MSBuild.exe");
+        if (File.Exists(candidate))
+        {
+            _msbuildExecutablePath = candidate;
         }
     }
 
@@ -218,7 +248,7 @@ public partial class VSCodeGenerator
     /// <param name="taskType">タスクタイプ（Build/Clean/Rebuild）</param>
     /// <param name="configuration">ビルド構成（Buildタスクの場合のみ）</param>
     /// <returns>タスクオブジェクト</returns>
-    private static object CreateMSBuildTask(
+    private object CreateMSBuildTask(
         string solutionName,
         string solutionFileName,
         string taskType,
@@ -251,7 +281,7 @@ public partial class VSCodeGenerator
         {
             label,
             type = "shell",
-            command = MSBuildPath,
+            command = _msbuildExecutablePath,
             args,
             group = new { kind = "build", isDefault },
             presentation = GetTaskPresentation(),
