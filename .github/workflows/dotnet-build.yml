@@ -1,0 +1,36 @@
+name: ビルド
+
+on:
+  push:
+    branches-ignore:
+      - releases
+      - releases/**
+  pull_request:
+    branches-ignore:
+      - releases
+      - releases/**
+
+jobs:
+  build:
+    name: .NET ビルド
+    runs-on: windows-latest
+    env:
+      SOLUTION_PATH: "*.sln"
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: .NET SDK をセットアップ
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: 依存関係を復元
+        run: dotnet restore "${{ env.SOLUTION_PATH }}"
+
+      - name: ビルド
+        run: dotnet build "${{ env.SOLUTION_PATH }}" --no-restore
+
+      - name: テスト
+        if: ${{ hashFiles('**/*Tests.csproj', '**/*Test.csproj') != '' }}
+        run: dotnet test "${{ env.SOLUTION_PATH }}" --no-build
