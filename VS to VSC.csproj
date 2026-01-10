@@ -11,9 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="17.14.8" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.Build.Locator" Version="1.9.1" />
-    <PackageReference Include="Velopack" Version="0.0.601" />
+    <PackageReference Include="Microsoft.Build" Version="18.0.2" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
+    <PackageReference Include="Velopack" Version="0.0.1298" />
   </ItemGroup>
 
 </Project>

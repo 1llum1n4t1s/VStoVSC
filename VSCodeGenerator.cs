@@ -342,6 +342,8 @@ public partial class VSCodeGenerator
             {
                 Directory.Delete(vscodeDir, true);
                 LogMessage("既存の.vscodeフォルダを削除しました。");
+                Directory.CreateDirectory(vscodeDir);
+                LogMessage("新しい.vscodeフォルダを作成しました。");
             }
             else
             {

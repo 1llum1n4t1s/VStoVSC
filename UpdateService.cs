@@ -26,7 +26,7 @@ namespace VS_to_VSC
 
             try
             {
-                using var updateManager = new UpdateManager(updateUrl);
+                var updateManager = new UpdateManager(updateUrl);
                 var updateInfo = await updateManager.CheckForUpdatesAsync();
                 if (updateInfo is null)
                 {
