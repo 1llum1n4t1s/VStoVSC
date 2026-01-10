@@ -13,18 +13,11 @@ public partial class VSCodeGenerator
 {
     #region 定数定義
 
-    // Visual Studio関連の定数
-    private const string VisualStudioPath = @"C:\Program Files\Microsoft Visual Studio\2022\Professional";
-    private const string MSBuildPath = @"C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe";
-    private const int MinimumVisualStudioVersion = 17; // Visual Studio 2022以降
-    private const string VSToolsPathTemplate = "MSBuild/Microsoft/VisualStudio/v17.0";
-
     // 設定ファイル名
     private const string TasksJsonFileName = "tasks.json";
     private const string VSCodeDirectoryName = ".vscode";
-
-    // JSON設定
     private const string TasksVersion = "2.0.0";
+    private const int MinimumVisualStudioVersion = 10; // Visual Studio 2010以降
 
     #endregion
 
@@ -36,9 +29,24 @@ public partial class VSCodeGenerator
     private readonly Action<string> _logCallback;
 
     /// <summary>
+    /// 検出されたVisual Studioのパス
+    /// </summary>
+    private string _visualStudioPath = string.Empty;
+
+    /// <summary>
+    /// 検出されたMSBuildパス
+    /// </summary>
+    private string _msbuildPath = string.Empty;
+
+    /// <summary>
     /// 使用するMSBuildの実行パス
     /// </summary>
-    private string _msbuildExecutablePath = MSBuildPath;
+    private string _msbuildExecutablePath = string.Empty;
+
+    /// <summary>
+    /// 検出されたVisual Studioのバージョン
+    /// </summary>
+    private string _visualStudioVersion = string.Empty;
 
     /// <summary>
     /// JSON シリアライゼーション用のオプション（キャッシュ用）
@@ -88,6 +96,13 @@ public partial class VSCodeGenerator
         {
             var instances = MSBuildLocator.QueryVisualStudioInstances();
 
+            if (!instances.Any())
+            {
+                LogMessage("Visual Studioのインスタンスが見つかりません。デフォルトMSBuildパスを使用します。");
+                UseDefaultMSBuildPath();
+                return;
+            }
+
             // Visual Studio付属のMSBuildインスタンスを優先的に検索
             var visualStudioInstance = FindBestVisualStudioInstance(instances);
 
@@ -105,6 +120,7 @@ public partial class VSCodeGenerator
         catch (Exception ex)
         {
             LogMessage($"MSBuild初期化中にエラーが発生: {ex.Message}");
+            UseDefaultMSBuildPath();
         }
     }
 
@@ -129,8 +145,12 @@ public partial class VSCodeGenerator
         MSBuildLocator.RegisterInstance(visualStudioInstance);
 
         var vsPath = visualStudioInstance.VisualStudioRootPath;
+        _visualStudioPath = vsPath;
+        _visualStudioVersion = GetVisualStudioVersionName(visualStudioInstance.Version);
         Environment.SetEnvironmentVariable("VSINSTALLDIR", vsPath);
-        Environment.SetEnvironmentVariable("VSToolsPath", Path.Combine(vsPath, VSToolsPathTemplate));
+
+        const string vsToolsPathTemplate = "MSBuild/Microsoft/VisualStudio/v17.0";
+        Environment.SetEnvironmentVariable("VSToolsPath", Path.Combine(vsPath, vsToolsPathTemplate));
 
         SetMSBuildExecutablePath(visualStudioInstance.MSBuildPath);
         LogMessage($"Visual Studio MSBuildインスタンスを登録: {vsPath}");
@@ -142,25 +162,102 @@ public partial class VSCodeGenerator
     /// <param name="instances">MSBuildインスタンスのコレクション</param>
     private void HandleFallbackMSBuildSetup(IEnumerable<VisualStudioInstance> instances)
     {
-        if (File.Exists(MSBuildPath))
+        RegisterLatestInstance(instances);
+        if (string.IsNullOrEmpty(_msbuildExecutablePath))
         {
-            SetupManualMSBuildEnvironment();
-            _msbuildExecutablePath = MSBuildPath;
-            RegisterBestAvailableInstance(instances);
+            UseDefaultMSBuildPath();
         }
-        else
+    }
+
+    /// <summary>
+    /// Visual Studioのバージョン番号から名前を取得する
+    /// </summary>
+    /// <param name="version">Visual Studioのバージョン</param>
+    /// <returns>Visual Studioの名前（例：Visual Studio 2026）</returns>
+    private static string GetVisualStudioVersionName(Version version)
+    {
+        return version.Major switch
         {
-            RegisterLatestInstance(instances);
+            10 => "Visual Studio 2010",
+            11 => "Visual Studio 2012",
+            12 => "Visual Studio 2013",
+            14 => "Visual Studio 2015",
+            15 => "Visual Studio 2017",
+            16 => "Visual Studio 2019",
+            17 => "Visual Studio 2022",
+            18 => "Visual Studio 2026",
+            _ => $"Visual Studio (Version {version.Major})"
+        };
+    }
+
+    /// <summary>
+    /// デフォルトのMSBuildパスを使用するように設定する（インスタンスが見つからない場合の代替処理）
+    /// </summary>
+    private void UseDefaultMSBuildPath()
+    {
+        var programFilesPath = Environment.GetEnvironmentVariable("ProgramFiles") ?? @"C:\Program Files";
+        var visualStudioBasePath = Path.Combine(programFilesPath, "Microsoft Visual Studio");
+
+        if (!Directory.Exists(visualStudioBasePath))
+        {
+            LogMessage("Visual Studioのインストールディレクトリが見つかりません。");
+            return;
         }
+
+        // インストールされているVisual Studioのバージョンを検索（降順で最新のものから取得）
+        var vsVersionDirs = Directory.GetDirectories(visualStudioBasePath)
+            .Select(d => Path.GetFileName(d))
+            .OrderByDescending(d => d)
+            .ToList();
+
+        if (!vsVersionDirs.Any())
+        {
+            LogMessage("利用可能なVisual Studioが見つかりません。");
+            return;
+        }
+
+        // 見つかったバージョンごとに、エディション（Professional/Enterprise/Community）を検索
+        foreach (var vsVersion in vsVersionDirs)
+        {
+            var vsVersionPath = Path.Combine(visualStudioBasePath, vsVersion);
+            var editions = new[] { "Professional", "Enterprise", "Community" };
+
+            foreach (var edition in editions)
+            {
+                var editionPath = Path.Combine(vsVersionPath, edition);
+                var msbuildPath = Path.Combine(editionPath, "MSBuild", "Current", "Bin", "MSBuild.exe");
+
+                if (File.Exists(msbuildPath))
+                {
+                    _visualStudioPath = editionPath;
+                    _msbuildPath = msbuildPath;
+                    _msbuildExecutablePath = msbuildPath;
+                    if (int.TryParse(vsVersion, out var versionNumber))
+                    {
+                        _visualStudioVersion = GetVisualStudioVersionName(new Version(versionNumber, 0));
+                    }
+                    else
+                    {
+                        _visualStudioVersion = $"Visual Studio {vsVersion}";
+                    }
+                    SetupManualMSBuildEnvironment();
+                    LogMessage($"最新のVisual Studioを検出: {vsVersion} {edition}");
+                    return;
+                }
+            }
+        }
+
+        LogMessage("MSBuild.exeが見つかりません。");
     }
 
     /// <summary>
     /// 手動でMSBuild環境を設定する
     /// </summary>
-    private static void SetupManualMSBuildEnvironment()
+    private void SetupManualMSBuildEnvironment()
     {
-        Environment.SetEnvironmentVariable("VSINSTALLDIR", VisualStudioPath);
-        Environment.SetEnvironmentVariable("VSToolsPath", Path.Combine(VisualStudioPath, VSToolsPathTemplate));
+        const string vsToolsPathTemplate = "MSBuild/Microsoft/VisualStudio/v17.0";
+        Environment.SetEnvironmentVariable("VSINSTALLDIR", _visualStudioPath);
+        Environment.SetEnvironmentVariable("VSToolsPath", Path.Combine(_visualStudioPath, vsToolsPathTemplate));
     }
 
     /// <summary>
@@ -177,6 +274,7 @@ public partial class VSCodeGenerator
         if (bestInstance != null)
         {
             MSBuildLocator.RegisterInstance(bestInstance);
+            _visualStudioVersion = GetVisualStudioVersionName(bestInstance.Version);
             SetMSBuildExecutablePath(bestInstance.MSBuildPath);
             LogMessage($"最適なMSBuildインスタンスを登録: {bestInstance.Name}");
         }
@@ -196,6 +294,7 @@ public partial class VSCodeGenerator
         {
             var instance = instances.OrderByDescending(x => x.Version).First();
             MSBuildLocator.RegisterInstance(instance);
+            _visualStudioVersion = GetVisualStudioVersionName(instance.Version);
             SetMSBuildExecutablePath(instance.MSBuildPath);
             LogMessage($"最新のMSBuildインスタンスを登録: {instance.Name}");
         }
@@ -255,24 +354,25 @@ public partial class VSCodeGenerator
         string taskType,
         string? configuration = null)
     {
+        var vsVersionText = string.IsNullOrEmpty(_visualStudioVersion) ? "Visual Studio" : _visualStudioVersion;
         var (label, args, detail, isDefault) = taskType switch
         {
             "Build" => (
                 $"ビルド - {solutionName} ソリューション - {configuration}",
                 new[] { solutionFileName, $"/p:Configuration={configuration}", "/verbosity:normal" },
-                $"Visual Studio 2022 MSBuildを使用して{solutionName}ソリューション全体を{configuration}構成でビルド",
+                $"{vsVersionText} MSBuildを使用して{solutionName}ソリューション全体を{configuration}構成でビルド",
                 configuration == "Debug"
             ),
             "Clean" => (
                 $"クリーン - {solutionName} ソリューション",
                 new[] { solutionFileName, "/t:Clean", "/verbosity:normal" },
-                $"Visual Studio 2022 MSBuildを使用して{solutionName}ソリューション全体をクリーン",
+                $"{vsVersionText} MSBuildを使用して{solutionName}ソリューション全体をクリーン",
                 false
             ),
             "Rebuild" => (
                 $"リビルド - {solutionName} ソリューション",
                 new[] { solutionFileName, "/t:Rebuild", "/verbosity:normal" },
-                $"Visual Studio 2022 MSBuildを使用して{solutionName}ソリューション全体をリビルド",
+                $"{vsVersionText} MSBuildを使用して{solutionName}ソリューション全体をリビルド",
                 false
             ),
             _ => throw new ArgumentException($"不明なタスクタイプ: {taskType}")
