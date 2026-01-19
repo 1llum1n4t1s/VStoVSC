@@ -2,11 +2,11 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "ビルド - VS to VSC ソリューション - Debug",
+      "label": "ビルド - VStoVSC ソリューション - Debug",
       "type": "shell",
       "command": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
       "args": [
-        "VS to VSC.slnx",
+        "VStoVSC.slnx",
         "/p:Configuration=Debug",
         "/verbosity:normal"
       ],
@@ -23,14 +23,14 @@
         "clear": false
       },
       "problemMatcher": "$msCompile",
-      "detail": "Visual Studio 2026 MSBuildを使用してVS to VSCソリューション全体をDebug構成でビルド"
+      "detail": "Visual Studio 2026 MSBuildを使用してVStoVSCソリューション全体をDebug構成でビルド"
     },
     {
-      "label": "ビルド - VS to VSC ソリューション - Release",
+      "label": "ビルド - VStoVSC ソリューション - Release",
       "type": "shell",
       "command": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
       "args": [
-        "VS to VSC.slnx",
+        "VStoVSC.slnx",
         "/p:Configuration=Release",
         "/verbosity:normal"
       ],
@@ -47,14 +47,14 @@
         "clear": false
       },
       "problemMatcher": "$msCompile",
-      "detail": "Visual Studio 2026 MSBuildを使用してVS to VSCソリューション全体をRelease構成でビルド"
+      "detail": "Visual Studio 2026 MSBuildを使用してVStoVSCソリューション全体をRelease構成でビルド"
     },
     {
-      "label": "クリーン - VS to VSC ソリューション",
+      "label": "クリーン - VStoVSC ソリューション",
       "type": "shell",
       "command": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
       "args": [
-        "VS to VSC.slnx",
+        "VStoVSC.slnx",
         "/t:Clean",
         "/verbosity:normal"
       ],
@@ -71,14 +71,14 @@
         "clear": false
       },
       "problemMatcher": "$msCompile",
-      "detail": "Visual Studio 2026 MSBuildを使用してVS to VSCソリューション全体をクリーン"
+      "detail": "Visual Studio 2026 MSBuildを使用してVStoVSCソリューション全体をクリーン"
     },
     {
-      "label": "リビルド - VS to VSC ソリューション",
+      "label": "リビルド - VStoVSC ソリューション",
       "type": "shell",
       "command": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
       "args": [
-        "VS to VSC.slnx",
+        "VStoVSC.slnx",
         "/t:Rebuild",
         "/verbosity:normal"
       ],
@@ -95,7 +95,7 @@
         "clear": false
       },
       "problemMatcher": "$msCompile",
-      "detail": "Visual Studio 2026 MSBuildを使用してVS to VSCソリューション全体をリビルド"
+      "detail": "Visual Studio 2026 MSBuildを使用してVStoVSCソリューション全体をリビルド"
     }
   ]
 }

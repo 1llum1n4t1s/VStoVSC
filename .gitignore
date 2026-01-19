@@ -4,6 +4,7 @@ obj/
 
 # Visual Studio 作業ディレクトリ
 .vs/
+.idea/
 
 # ユーザー固有の設定
 *.user

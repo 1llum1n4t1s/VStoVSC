@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 
 namespace VS_to_VSC
 {
@@ -13,31 +13,24 @@ namespace VS_to_VSC
         public MainWindow()
         {
             InitializeComponent();
-
-            // ログに初期メッセージを表示
-            LogMessage("Visual Studio to VSCode Converter が起動しました。");
         }
 
         /// <summary>
-        /// ファイルパステキストボックスのキーダウンイベントハンドラ
+        /// ドロップエリアがクリックされた時のイベントハンドラ
         /// </summary>
-        private void FilePathTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void DropArea_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // Enterキーが押された場合、変換処理を開始
-            if (e.Key == System.Windows.Input.Key.Enter)
+            // 左クリックの場合のみ処理
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
-                var solutionPath = FilePathTextBox.Text.Trim();
-                if (!string.IsNullOrEmpty(solutionPath))
-                {
-                    StartConversion(solutionPath);
-                }
+                OpenFileSelection();
             }
         }
 
         /// <summary>
-        /// 参照ボタンのクリックイベントハンドラ
+        /// ファイル選択ダイアログを表示して変換を開始する
         /// </summary>
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        private void OpenFileSelection()
         {
             try
             {
@@ -52,21 +45,70 @@ namespace VS_to_VSC
                 // ダイアログを表示
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    // 選択されたファイルパスをテキストボックスに設定
-                    FilePathTextBox.Text = openFileDialog.FileName;
-                    LogMessage($"ファイルが選択されました: {openFileDialog.FileName}");
-
                     // ファイル選択後、自動的に変換処理を開始
-                    LogMessage("自動変換を開始します...");
                     StartConversion(openFileDialog.FileName);
                 }
             }
             catch (Exception ex)
             {
                 var errorMessage = $"ファイル選択中にエラーが発生しました。\n\nエラー内容: {ex.Message}";
-                LogMessage($"ファイル選択エラー: {ex.Message}");
                 MessageBox.Show(errorMessage, "ファイル選択エラー", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        /// <summary>
+        /// ドロップエリアへのドロップイベントハンドラ
+        /// </summary>
+        private void DropArea_Drop(object sender, DragEventArgs e)
+        {
+            ResetDropAreaStyle();
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null && files.Length > 0)
+                {
+                    StartConversion(files[0]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// ドロップエリアへのドラッグオーバーイベントハンドラ
+        /// </summary>
+        private void DropArea_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+                // ドラッグオーバー時に枠線を強調
+                DropArea.BorderBrush = SystemColors.HighlightBrush;
+                DropArea.BorderThickness = new Thickness(3);
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// ドロップエリアからのドラッグリーブイベントハンドラ
+        /// </summary>
+        private void DropArea_DragLeave(object sender, DragEventArgs e)
+        {
+            ResetDropAreaStyle();
+        }
+
+        /// <summary>
+        /// ドロップエリアのスタイルを初期状態に戻す
+        /// </summary>
+        private void ResetDropAreaStyle()
+        {
+            // 個別指定を解除し、テーマの設定（XAMLの定義）に従うようにする
+            DropArea.ClearValue(BackgroundProperty);
+            DropArea.ClearValue(BorderBrushProperty);
+            DropArea.ClearValue(BorderThicknessProperty);
         }
 
         /// <summary>
@@ -83,13 +125,10 @@ namespace VS_to_VSC
                     return;
                 }
 
-                LogMessage("変換処理を開始します...");
-
                 // VSCodeGeneratorクラスを使用してVSCode設定ファイルを生成
-                var generator = new VSCodeGenerator(LogMessage);
+                // ログ出力は行わない
+                var generator = new VSCodeGenerator(_ => { });
                 generator.GenerateVSCodeFiles(solutionPath);
-
-                LogMessage("変換が完了しました。");
 
                 // 成功メッセージをダイアログで表示
                 var successMessage = $"変換が完了しました。\n\nソリューションファイル: {System.IO.Path.GetFileName(solutionPath)}\n\n.vscodeフォルダに設定ファイルが生成されました。";
@@ -97,8 +136,7 @@ namespace VS_to_VSC
             }
             catch (Exception ex)
             {
-                var errorMessage = $"変換処理中にエラーが発生しました。\n\nエラー内容: {ex.Message}\n\n詳細はログを確認してください。";
-                LogMessage($"変換エラー: {ex.Message}");
+                var errorMessage = $"変換処理中にエラーが発生しました。\n\nエラー内容: {ex.Message}";
                 MessageBox.Show(errorMessage, "変換エラー", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -113,7 +151,6 @@ namespace VS_to_VSC
             if (string.IsNullOrEmpty(solutionPath))
             {
                 var errorMessage = "ファイルパスが入力されていません。\n\nソリューションファイルのパスを入力してください。";
-                LogMessage("エラー: ファイルパスが入力されていません。");
                 MessageBox.Show(errorMessage, "入力エラー", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
@@ -121,7 +158,6 @@ namespace VS_to_VSC
             if (!System.IO.File.Exists(solutionPath))
             {
                 var errorMessage = $"指定されたファイルが存在しません。\n\nパス: {solutionPath}\n\n正しいファイルパスを確認してください。";
-                LogMessage("エラー: 指定されたファイルが存在しません。");
                 MessageBox.Show(errorMessage, "ファイル不存在エラー", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
@@ -131,29 +167,11 @@ namespace VS_to_VSC
             if (extension != ".sln" && extension != ".slnx")
             {
                 var errorMessage = $"サポートされていないファイル形式です。\n\nファイル: {System.IO.Path.GetFileName(solutionPath)}\n拡張子: {extension}\n\n.slnまたは.slnxファイルを選択してください。";
-                LogMessage("エラー: サポートされていないファイル形式です。.slnまたは.slnxファイルを選択してください。");
                 MessageBox.Show(errorMessage, "ファイル形式エラー", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// ログメッセージを表示する
-        /// </summary>
-        /// <param name="message">表示するメッセージ</param>
-        public void LogMessage(string message)
-        {
-            var timestamp = DateTime.Now.ToString("HH:mm:ss");
-            var logMessage = $"[{timestamp}] {message}";
-
-            // UIスレッドでログを更新
-            Dispatcher.Invoke(() =>
-            {
-                LogTextBox.AppendText(logMessage + Environment.NewLine);
-                LogTextBox.ScrollToEnd();
-            });
         }
     }
 }
