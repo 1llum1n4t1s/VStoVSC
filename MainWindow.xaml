@@ -1,59 +1,58 @@
-﻿<Window x:Class="VS_to_VSC.MainWindow"
+<Window x:Class="VS_to_VSC.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VS_to_VSC"
         mc:Ignorable="d"
-        Title="Visual Studio to VSCode Converter" Height="450" Width="700"
+        Title="VS to VSCode Converter" Height="380" Width="500"
+        Icon="icon/app.ico"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
-    <Grid Margin="25">
+    <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
 
-        <!-- ファイルパス入力フィールド -->
-        <TextBox x:Name="FilePathTextBox" 
-                 Grid.Row="0" Grid.Column="0"
-                 Margin="0,0,15,0"
-                 Height="32"
-                 VerticalAlignment="Center"
-                 Text=""
-                 FontSize="12"
-                 Padding="8,6"
-                 ToolTip="Visual Studioソリューションファイルのパスを入力してください。Enterキーで変換開始"
-                 KeyDown="FilePathTextBox_KeyDown"/>
+        <!-- ヘッダー -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="VS to VSCode Converter" 
+                       FontSize="22" 
+                       FontWeight="ExtraBold" 
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
 
-        <!-- 参照して変換ボタン -->
-        <Button x:Name="BrowseButton" 
-                Grid.Row="0" Grid.Column="1"
-                Content="参照して変換" 
-                Width="120" Height="32"
-                Click="BrowseButton_Click"
-                FontSize="12"
-                FontWeight="Medium"
-                ToolTip="ソリューションファイルを選択して変換開始"/>
-
-        <!-- ログ表示エリア -->
-        <TextBox x:Name="LogTextBox" 
-                 Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                 IsReadOnly="True"
-                 VerticalScrollBarVisibility="Auto"
-                 HorizontalScrollBarVisibility="Auto"
-                 Text=""
-                 FontFamily="Consolas"
-                 FontSize="11"
-                 Background="#2D2D30"
-                 Foreground="White"
-                 BorderBrush="#3F3F46"
-                 BorderThickness="1"
-                 Padding="12,10"/>
+        <!-- 統合ドロップ・クリックエリア -->
+        <Border x:Name="DropArea"
+                Grid.Row="1"
+                BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                Background="Transparent"
+                BorderThickness="2"
+                CornerRadius="12"
+                AllowDrop="True"
+                Drop="DropArea_Drop"
+                DragOver="DropArea_DragOver"
+                DragLeave="DropArea_DragLeave"
+                MouseDown="DropArea_MouseDown"
+                Cursor="Hand"
+                ToolTip="ここにファイルをドロップするか、クリックしてファイルを選択">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="ここにファイルをドロップ" 
+                           FontSize="18" 
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="またはクリックしてファイルを選択" 
+                           FontSize="13" 
+                           Margin="0,8,0,0"
+                           HorizontalAlignment="Center"
+                           Foreground="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"/>
+                <TextBlock Text="(.sln / .slnx)" 
+                           FontSize="11" 
+                           Margin="0,15,0,0"
+                           HorizontalAlignment="Center"
+                           Opacity="0.6"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

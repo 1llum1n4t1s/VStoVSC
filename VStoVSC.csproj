@@ -1,16 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows8.0</TargetFramework>
     <RootNamespace>VS_to_VSC</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ApplicationIcon>icon\app.ico</ApplicationIcon>
+    <Version>2.0.1</Version>
+    <Authors>ゆろち</Authors>
+    <Title>VStoVSC</Title>
   </PropertyGroup>
 
   <ItemGroup>
+    <Resource Include="icon\app.ico" />
     <PackageReference Include="Microsoft.Build" Version="18.0.2" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
     <PackageReference Include="Velopack" Version="0.0.1298" />

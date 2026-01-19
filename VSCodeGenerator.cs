@@ -3,6 +3,7 @@ using Microsoft.Build.Locator;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace VS_to_VSC;
 
@@ -11,17 +12,35 @@ namespace VS_to_VSC;
 /// </summary>
 public partial class VSCodeGenerator
 {
-    #region 定数定義
-
-    // 設定ファイル名
+    /// <summary>
+    /// tasks.jsonのファイル名
+    /// </summary>
     private const string TasksJsonFileName = "tasks.json";
+
+    /// <summary>
+    /// launch.jsonのファイル名
+    /// </summary>
+    private const string LaunchJsonFileName = "launch.json";
+
+    /// <summary>
+    /// .vscodeディレクトリ名
+    /// </summary>
     private const string VSCodeDirectoryName = ".vscode";
+
+    /// <summary>
+    /// tasks.jsonのバージョン
+    /// </summary>
     private const string TasksVersion = "2.0.0";
+
+    /// <summary>
+    /// launch.jsonのバージョン
+    /// </summary>
+    private const string LaunchVersion = "0.2.0";
+
+    /// <summary>
+    /// 最小対応Visual Studioバージョン
+    /// </summary>
     private const int MinimumVisualStudioVersion = 10; // Visual Studio 2010以降
-
-    #endregion
-
-    #region フィールド
 
     /// <summary>
     /// ログ出力用のコールバック
@@ -57,10 +76,6 @@ public partial class VSCodeGenerator
         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
 
-    #endregion
-
-    #region コンストラクタ
-
     /// <summary>
     /// コンストラクタ
     /// </summary>
@@ -73,10 +88,6 @@ public partial class VSCodeGenerator
         // MSBuildの初期化
         InitializeMSBuild();
     }
-
-    #endregion
-
-    #region プライベートメソッド
 
     /// <summary>
     /// ログメッセージを出力する
@@ -319,9 +330,274 @@ public partial class VSCodeGenerator
         }
     }
 
-    #endregion
+    /// <summary>
+    /// launch.jsonファイルを生成する
+    /// </summary>
+    /// <param name="vscodeDir">.vscodeディレクトリのパス</param>
+    /// <param name="solutionPath">ソリューションファイルのパス</param>
+    /// <param name="solutionName">ソリューション名</param>
+    public void GenerateLaunchJson(string vscodeDir, string solutionPath, string solutionName)
+    {
+        var solutionDir = Path.GetDirectoryName(solutionPath)!;
+        try
+        {
+            // ソリューションファイルを解析してプロジェクト一覧を取得
+            var projects = GetProjects(solutionPath);
 
-    #region パブリックメソッド
+            ProjectInfo? startupProject = null;
+
+            if (projects.Count == 1)
+            {
+                // プロジェクトが1つだけならそれをスタートアップとする
+                startupProject = projects[0];
+            }
+            else if (projects.Count > 1)
+            {
+                // 複数のプロジェクトがある場合、OutputTypeがExeまたはWinExeのものを探す
+                var executableProjects = projects.Where(p => IsExecutableProject(p.AbsolutePath)).ToList();
+
+                if (executableProjects.Count == 1)
+                {
+                    // 実行可能プロジェクトが1つだけならそれをスタートアップとする
+                    startupProject = executableProjects[0];
+                }
+            }
+
+            // スタートアッププロジェクトが特定できた場合のみlaunch.jsonを生成
+            if (startupProject != null)
+            {
+                var launchConfig = CreateLaunchConfig(startupProject, solutionDir, solutionName);
+                if (launchConfig != null)
+                {
+                    var launchPath = Path.Combine(vscodeDir, LaunchJsonFileName);
+                    SaveJsonFile(launchPath, launchConfig);
+                    LogMessage($"launch.json生成完了: {startupProject.ProjectName}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // エラーが発生しても処理を継続するため、ログ出力のみ行う
+            LogMessage($"launch.json生成中にエラーが発生: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// プロジェクトが実行可能かどうか（OutputTypeがExeまたはWinExeか）を判定する
+    /// </summary>
+    /// <param name="projectPath">プロジェクトファイルのパス</param>
+    /// <returns>実行可能な場合はtrue</returns>
+    private bool IsExecutableProject(string projectPath)
+    {
+        try
+        {
+            if (!File.Exists(projectPath))
+            {
+                return false;
+            }
+
+            // プロジェクトファイルをXMLとして読み込み
+            var doc = XDocument.Load(projectPath);
+            var ns = doc.Root?.GetDefaultNamespace() ?? XNamespace.None;
+
+            // OutputType要素を検索
+            var outputType = doc.Descendants(ns + "OutputType").FirstOrDefault()?.Value;
+
+            // Exe または WinExe なら実行可能とみなす
+            return outputType is "Exe" or "WinExe";
+        }
+        catch
+        {
+            // 解析に失敗した場合は実行不可とみなす
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// ソリューションファイルからプロジェクト一覧を取得する
+    /// </summary>
+    /// <param name="solutionPath">ソリューションファイルのパス</param>
+    /// <returns>プロジェクト情報のリスト</returns>
+    private List<ProjectInfo> GetProjects(string solutionPath)
+    {
+        var extension = Path.GetExtension(solutionPath).ToLowerInvariant();
+        if (extension == ".slnx")
+        {
+            return GetProjectsFromSlnx(solutionPath);
+        }
+        else
+        {
+            return GetProjectsFromSln(solutionPath);
+        }
+    }
+
+    /// <summary>
+    /// .slnxファイルからプロジェクト一覧を取得する
+    /// </summary>
+    /// <param name="solutionPath">.slnxファイルのパス</param>
+    /// <returns>プロジェクト情報のリスト</returns>
+    private List<ProjectInfo> GetProjectsFromSlnx(string solutionPath)
+    {
+        var projects = new List<ProjectInfo>();
+        var solutionDir = Path.GetDirectoryName(solutionPath)!;
+
+        try
+        {
+            var doc = XDocument.Load(solutionPath);
+            var projectElements = doc.Root?.Descendants("Project") ?? Enumerable.Empty<XElement>();
+
+            foreach (var element in projectElements)
+            {
+                var relativePath = element.Attribute("Path")?.Value;
+                if (string.IsNullOrEmpty(relativePath))
+                {
+                    continue;
+                }
+
+                var absolutePath = Path.GetFullPath(Path.Combine(solutionDir, relativePath));
+                var projectName = Path.GetFileNameWithoutExtension(absolutePath);
+
+                projects.Add(new ProjectInfo
+                {
+                    ProjectName = projectName,
+                    AbsolutePath = absolutePath
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            LogMessage($".slnxファイルの解析中にエラーが発生しました: {ex.Message}");
+        }
+
+        return projects;
+    }
+
+    /// <summary>
+    /// .slnファイルからプロジェクト一覧を取得する
+    /// </summary>
+    /// <param name="solutionPath">.slnファイルのパス</param>
+    /// <returns>プロジェクト情報のリスト</returns>
+    private List<ProjectInfo> GetProjectsFromSln(string solutionPath)
+    {
+        var projects = new List<ProjectInfo>();
+        try
+        {
+            var solution = SolutionFile.Parse(solutionPath);
+            foreach (var p in solution.ProjectsInOrder)
+            {
+                if (p.ProjectType.ToString() == "KnownToBeMSBuildProject")
+                {
+                    projects.Add(new ProjectInfo
+                    {
+                        ProjectName = p.ProjectName,
+                        AbsolutePath = p.AbsolutePath
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LogMessage($".slnファイルの解析中にエラーが発生しました: {ex.Message}");
+        }
+        return projects;
+    }
+
+    /// <summary>
+    /// プロジェクト情報を保持する内部クラス
+    /// </summary>
+    private sealed class ProjectInfo
+    {
+        /// <summary>プロジェクト名</summary>
+        public string ProjectName { get; init; } = string.Empty;
+        /// <summary>プロジェクトファイルの絶対パス</summary>
+        public string AbsolutePath { get; init; } = string.Empty;
+    }
+
+    /// <summary>
+    /// launch.json用の設定オブジェクトを作成する
+    /// </summary>
+    /// <param name="projectInfo">対象プロジェクトの情報</param>
+    /// <param name="solutionDir">ソリューションディレクトリのパス</param>
+    /// <param name="solutionName">ソリューション名</param>
+    /// <returns>launch.json用の匿名オブジェクト</returns>
+    private object? CreateLaunchConfig(ProjectInfo projectInfo, string solutionDir, string solutionName)
+    {
+        var projectPath = projectInfo.AbsolutePath;
+        var projectDir = Path.GetDirectoryName(projectPath)!;
+
+        // ソリューションディレクトリからの相対パスを取得
+        var relativeProjectDir = Path.GetRelativePath(solutionDir, projectDir);
+        var projectName = projectInfo.ProjectName;
+
+        try
+        {
+            // プロジェクトファイルから情報を取得
+            var doc = XDocument.Load(projectPath);
+            var ns = doc.Root?.GetDefaultNamespace() ?? XNamespace.None;
+
+            // ターゲットフレームワークを取得（単一または複数から先頭のものを選択）
+            var targetFramework = doc.Descendants(ns + "TargetFramework").FirstOrDefault()?.Value
+                               ?? doc.Descendants(ns + "TargetFrameworks").FirstOrDefault()?.Value?.Split(';').FirstOrDefault();
+
+            if (string.IsNullOrEmpty(targetFramework))
+            {
+                // ターゲットフレームワークが取得できない場合は空文字に設定（.NET Frameworkの古い形式など）
+                targetFramework = string.Empty;
+            }
+
+            string programPath;
+            string type;
+
+            // VSCode用のパス区切り文字（スラッシュ）に変換し、末尾にスラッシュを付与
+            var normalizedRelativePath = relativeProjectDir == "." ? "" : relativeProjectDir.Replace('\\', '/') + "/";
+
+            // .NET (Core) か .NET Framework かを判定してパスとデバッガタイプを設定
+            if (targetFramework.StartsWith("net") && !targetFramework.Contains("-windows") && !targetFramework.StartsWith("net4"))
+            {
+                // .NET Core / .NET 5+ (Linux/Mac/Windows 共通)
+                programPath = $"${{workspaceFolder}}/{normalizedRelativePath}bin/Debug/{targetFramework}/{projectName}.dll";
+                type = "coreclr";
+            }
+            else if (targetFramework.StartsWith("net4") || string.IsNullOrEmpty(targetFramework))
+            {
+                // .NET Framework (Windows 専用)
+                programPath = $"${{workspaceFolder}}/{normalizedRelativePath}bin/Debug/{projectName}.exe";
+                type = "clr";
+            }
+            else
+            {
+                // その他 (.NET 5+ windows-specific など)
+                programPath = $"${{workspaceFolder}}/{normalizedRelativePath}bin/Debug/{targetFramework}/{projectName}.exe";
+                type = "coreclr";
+            }
+
+            // launch.json の構造を構築
+            return new
+            {
+                version = LaunchVersion,
+                configurations = new[]
+                {
+                    new
+                    {
+                        name = $".NET Launch ({projectName})",
+                        type,
+                        request = "launch",
+                        preLaunchTask = $"ビルド - {solutionName} ソリューション - Debug",
+                        program = programPath,
+                        args = Array.Empty<string>(),
+                        cwd = $"${{workspaceFolder}}/{normalizedRelativePath.TrimEnd('/')}",
+                        console = "internalConsole",
+                        stopAtEntry = false
+                    }
+                }
+            };
+        }
+        catch
+        {
+            // 設定作成に失敗した場合はnullを返す
+            return null;
+        }
+    }
 
     /// <summary>
     /// 共通のタスクプレゼンテーション設定を取得する
@@ -459,6 +735,9 @@ public partial class VSCodeGenerator
         // tasks.jsonファイルを生成
         GenerateTasksJson(vscodeDir, solutionName, solutionFileName);
 
+        // launch.jsonファイルを生成
+        GenerateLaunchJson(vscodeDir, solutionPath, solutionName);
+
         LogMessage("VSCode設定ファイル生成が完了しました。");
     }
 
@@ -472,6 +751,4 @@ public partial class VSCodeGenerator
         var jsonString = JsonSerializer.Serialize(obj, JsonOptions);
         File.WriteAllText(filePath, jsonString, System.Text.Encoding.UTF8);
     }
-
-    #endregion
 }
