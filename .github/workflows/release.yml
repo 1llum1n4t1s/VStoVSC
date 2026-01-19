@@ -26,10 +26,10 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: 依存関係を復元
-        run: dotnet restore "VS to VSC.csproj"
+        run: dotnet restore VStoVSC.csproj
 
       - name: 発行
-        run: dotnet publish "VS to VSC.csproj" -c Release -r win-x64 --self-contained false -o "$env:PUBLISH_DIR"
+        run: dotnet publish "VStoVSC.csproj" -c Release -r win-x64 --self-contained false -o "$env:PUBLISH_DIR"
 
       - name: Velopack CLI をインストール
         run: dotnet tool install --global vpk

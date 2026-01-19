@@ -1,4 +1,4 @@
-﻿<Window x:Class="VS_to_VSC.MainWindow"
+<Window x:Class="VS_to_VSC.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:VS_to_VSC"
         mc:Ignorable="d"
         Title="Visual Studio to VSCode Converter" Height="450" Width="700"
+        Icon="icon/app.ico"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="25">
