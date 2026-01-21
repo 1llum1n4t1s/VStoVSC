@@ -142,9 +142,10 @@ public partial class VSCodeGenerator
     /// <returns>最適なVisual Studioインスタンス</returns>
     private static VisualStudioInstance? FindBestVisualStudioInstance(IEnumerable<VisualStudioInstance> instances)
     {
-        return instances.FirstOrDefault(x =>
-            x.DiscoveryType == DiscoveryType.VisualStudioSetup &&
-            x.Version.Major >= MinimumVisualStudioVersion);
+        return instances
+            .Where(x => x.DiscoveryType == DiscoveryType.VisualStudioSetup && x.Version.Major >= MinimumVisualStudioVersion)
+            .OrderByDescending(x => x.Version)
+            .FirstOrDefault();
     }
 
     /// <summary>
@@ -160,7 +161,7 @@ public partial class VSCodeGenerator
         _visualStudioVersion = GetVisualStudioVersionName(visualStudioInstance.Version);
         Environment.SetEnvironmentVariable("VSINSTALLDIR", vsPath);
 
-        const string vsToolsPathTemplate = "MSBuild/Microsoft/VisualStudio/v17.0";
+        var vsToolsPathTemplate = $"MSBuild/Microsoft/VisualStudio/v{visualStudioInstance.Version.Major}.0";
         Environment.SetEnvironmentVariable("VSToolsPath", Path.Combine(vsPath, vsToolsPathTemplate));
 
         SetMSBuildExecutablePath(visualStudioInstance.MSBuildPath);
@@ -245,13 +246,27 @@ public partial class VSCodeGenerator
                     _msbuildExecutablePath = msbuildPath;
                     if (int.TryParse(vsVersion, out var versionNumber))
                     {
-                        _visualStudioVersion = GetVisualStudioVersionName(new Version(versionNumber, 0));
+                        var majorVersion = versionNumber > 100 ? versionNumber switch
+                        {
+                            2010 => 10,
+                            2012 => 11,
+                            2013 => 12,
+                            2015 => 14,
+                            2017 => 15,
+                            2019 => 16,
+                            2022 => 17,
+                            2026 => 18,
+                            _ => 17
+                        } : versionNumber;
+
+                        _visualStudioVersion = GetVisualStudioVersionName(new Version(majorVersion, 0));
+                        SetupManualMSBuildEnvironment(majorVersion);
                     }
                     else
                     {
                         _visualStudioVersion = $"Visual Studio {vsVersion}";
+                        SetupManualMSBuildEnvironment(17); // デフォルト
                     }
-                    SetupManualMSBuildEnvironment();
                     LogMessage($"最新のVisual Studioを検出: {vsVersion} {edition}");
                     return;
                 }
@@ -264,9 +279,10 @@ public partial class VSCodeGenerator
     /// <summary>
     /// 手動でMSBuild環境を設定する
     /// </summary>
-    private void SetupManualMSBuildEnvironment()
+    /// <param name="majorVersion">MSBuildのメジャーバージョン</param>
+    private void SetupManualMSBuildEnvironment(int majorVersion)
     {
-        const string vsToolsPathTemplate = "MSBuild/Microsoft/VisualStudio/v17.0";
+        var vsToolsPathTemplate = $"MSBuild/Microsoft/VisualStudio/v{majorVersion}.0";
         Environment.SetEnvironmentVariable("VSINSTALLDIR", _visualStudioPath);
         Environment.SetEnvironmentVariable("VSToolsPath", Path.Combine(_visualStudioPath, vsToolsPathTemplate));
     }

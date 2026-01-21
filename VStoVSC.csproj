@@ -12,6 +12,7 @@
     <Version>2.0.1</Version>
     <Authors>ゆろち</Authors>
     <Title>VStoVSC</Title>
+    <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
