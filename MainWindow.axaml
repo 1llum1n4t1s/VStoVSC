@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+        xmlns:vm="using:VS_to_VSC.ViewModels"
+        x:Class="VS_to_VSC.MainWindow"
+        Title="VStoVSCode Converter"
+        Width="500"
+        Height="380"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Icon="icon/app.ico">
+    <Grid RowDefinitions="Auto,*" Margin="30">
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="VStoVSCode Converter"
+                       FontSize="22"
+                       FontWeight="ExtraBold"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+        <Border x:Name="DropArea"
+                Grid.Row="1"
+                Background="Transparent"
+                BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                BorderThickness="2"
+                CornerRadius="12"
+                Cursor="Hand"
+                ToolTip.Tip="ここにファイルをドロップするか、クリックしてファイルを選択"
+                Padding="16"
+                PointerPressed="DropArea_OnPointerPressed">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="ここにファイルをドロップ"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="またはクリックしてファイルを選択"
+                           FontSize="13"
+                           Margin="0,8,0,0"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="(.sln / .slnx)"
+                           FontSize="11"
+                           Margin="0,15,0,0"
+                           HorizontalAlignment="Center"
+                           Opacity="0.6" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

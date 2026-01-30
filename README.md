@@ -18,7 +18,6 @@ Visual Studio のソリューション（.sln / .slnx）を VS Code 用に変換
 
 - **OS**: Windows
 - **ランタイム**: .NET 10.0
-- **必須ツール**: Visual Studio 2022（MSBuild を使用するため）
 
 ## 使い方
 
