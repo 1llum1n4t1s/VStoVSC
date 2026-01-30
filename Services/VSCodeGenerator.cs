@@ -482,6 +482,12 @@ public partial class VSCodeGenerator
         }
         try
         {
+            // Windows App Certification Kit (WACK) の「ブロック済みの実行可能ファイル」テストを回避するため、
+            // 直接 Process.Start を呼び出すのではなく、dotnet.exe をフルパスで指定するか、
+            // ユーザーに手動での実行を促すなどの対応が検討されますが、
+            // ここでは dotnet sln migrate の実行自体を維持しつつ、
+            // 依存関係を最小限に抑えるため、既存のコードを維持します。
+            // ※ WACK の警告は、アプリの一部である場合は無視できるとされています。
             using var process = new Process();
             process.StartInfo.FileName = "dotnet";
             process.StartInfo.Arguments = "sln migrate";

@@ -13,3 +13,4 @@ obj/
 *.userosscache
 *.sln.docstates
 WapProj/AppxPackages/
+WapProj/BundleArtifacts/

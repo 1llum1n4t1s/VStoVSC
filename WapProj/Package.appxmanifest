@@ -9,7 +9,7 @@
     <Identity
     Name="1llum1n4t1s.436798DDDC194"
     Publisher="CN=9C1F01DE-B54A-4E88-9F62-D9183C137B30"
-    Version="2.0.4.0"
+    Version="2.0.5.0"
     ProcessorArchitecture="x64" />
 
   <Properties>
@@ -19,8 +19,8 @@
   </Properties>
 
   <Resources>
-    <Resource Language="ja-jp" />
-    <Resource Language="en-us" />
+    <Resource Language="ja-JP" />
+    <Resource Language="en-US" />
   </Resources>
 
   <Dependencies>

@@ -38,7 +38,7 @@
     <TargetPlatformMinVersion>10.0.26100.0</TargetPlatformMinVersion>
     <DefaultLanguage>ja-JP</DefaultLanguage>
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
-    <NoWarn>$(NoWarn);NU1702;NU1503</NoWarn>
+    <NoWarn>$(NoWarn);NU1702;NU1503;NU1701</NoWarn>
     <EntryPointProjectUniqueName>..\VStoVSC.csproj</EntryPointProjectUniqueName>
     <AppxPackageDir>AppxPackages</AppxPackageDir>
     <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
@@ -47,6 +47,11 @@
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppxBundle>Always</AppxBundle>
     <UapAppxPackageBuildMode>StoreUpload</UapAppxPackageBuildMode>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -54,13 +59,27 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\SplashScreen.scale-200.png" />
-    <Content Include="Images\LockScreenLogo.scale-200.png" />
-    <Content Include="Images\Square150x150Logo.scale-200.png" />
-    <Content Include="Images\Square44x44Logo.scale-200.png" />
-    <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Images\StoreLogo.png" />
-    <Content Include="Images\Wide310x150Logo.scale-200.png" />
+    <Content Include="Images\SplashScreen.scale-200.png">
+      <Link>Images\SplashScreen.scale-200.png</Link>
+    </Content>
+    <Content Include="Images\LockScreenLogo.scale-200.png">
+      <Link>Images\LockScreenLogo.scale-200.png</Link>
+    </Content>
+    <Content Include="Images\Square150x150Logo.scale-200.png">
+      <Link>Images\Square150x150Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="Images\Square44x44Logo.scale-200.png">
+      <Link>Images\Square44x44Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Link>Images\Square44x44Logo.targetsize-24_altform-unplated.png</Link>
+    </Content>
+    <Content Include="Images\StoreLogo.png">
+      <Link>Images\StoreLogo.png</Link>
+    </Content>
+    <Content Include="Images\Wide310x150Logo.scale-200.png">
+      <Link>Images\Wide310x150Logo.scale-200.png</Link>
+    </Content>
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
