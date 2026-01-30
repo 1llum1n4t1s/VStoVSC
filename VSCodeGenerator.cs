@@ -2,7 +2,6 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Locator;
 using System.IO;
 using System.Text.Json;
-using System.Windows;
 using System.Xml.Linq;
 
 namespace VS_to_VSC;
@@ -711,26 +710,31 @@ public partial class VSCodeGenerator
     }
 
     /// <summary>
-    /// VSCode設定ファイルを生成する
+    /// VSCode設定ファイルを生成する（同期版。既存 .vscode がある場合は削除せず tasks.json のみ上書き）
     /// </summary>
     /// <param name="solutionPath">元のソリューションファイルのパス</param>
     public void GenerateVSCodeFiles(string solutionPath)
+    {
+        GenerateVSCodeFilesAsync(solutionPath, null).GetAwaiter().GetResult();
+    }
+
+    /// <summary>
+    /// VSCode設定ファイルを生成する
+    /// </summary>
+    /// <param name="solutionPath">元のソリューションファイルのパス</param>
+    /// <param name="confirmOverwriteVscodeAsync">既存 .vscode がある場合の確認（true=削除して再生成、false=保持して tasks.json のみ上書き）。null の場合は削除しない</param>
+    public async Task GenerateVSCodeFilesAsync(string solutionPath, Func<string, Task<bool>>? confirmOverwriteVscodeAsync = null)
     {
         var solutionDir = Path.GetDirectoryName(solutionPath)!;
         var solutionName = Path.GetFileNameWithoutExtension(solutionPath);
         var solutionFileName = Path.GetFileName(solutionPath);
         var vscodeDir = Path.Combine(solutionDir, VSCodeDirectoryName);
 
-        // 既存の.vscodeフォルダがある場合は確認ダイアログを表示
         if (Directory.Exists(vscodeDir))
         {
-            var result = MessageBox.Show(
-                "既存の.vscodeフォルダが見つかりました。\n削除して再生成しますか？\n\n「削除しない」を選ぶと tasks.json のみ上書きします。",
-                "確認",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
+            const string message = "既存の.vscodeフォルダが見つかりました。\n削除して再生成しますか？\n\n「削除しない」を選ぶと tasks.json のみ上書きします。";
+            var deleteAndRegenerate = confirmOverwriteVscodeAsync != null && await confirmOverwriteVscodeAsync(message).ConfigureAwait(false);
+            if (deleteAndRegenerate)
             {
                 Directory.Delete(vscodeDir, true);
                 LogMessage("既存の.vscodeフォルダを削除しました。");
@@ -748,12 +752,8 @@ public partial class VSCodeGenerator
             LogMessage("新しい.vscodeフォルダを作成しました。");
         }
 
-        // tasks.jsonファイルを生成
         GenerateTasksJson(vscodeDir, solutionName, solutionFileName);
-
-        // launch.jsonファイルを生成
         GenerateLaunchJson(vscodeDir, solutionPath, solutionName);
-
         LogMessage("VSCode設定ファイル生成が完了しました。");
     }
 

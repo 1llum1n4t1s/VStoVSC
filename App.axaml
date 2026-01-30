@@ -1,0 +1,9 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+             x:Class="VS_to_VSC.App"
+             RequestedThemeVariant="Default">
+    <Application.Styles>
+        <actipro:ModernTheme />
+    </Application.Styles>
+</Application>
