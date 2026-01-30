@@ -1,6 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="VS_to_VSC.Dialogs.MessageDialogWindow"
+        x:Class="VS_to_VSC.Views.Dialogs.ConfirmDialogWindow"
         x:Name="DialogWindow"
         Width="400"
         SizeToContent="Height"
@@ -8,6 +8,9 @@
         CanResize="False">
     <StackPanel Margin="24" Spacing="16">
         <TextBlock x:Name="MessageText" TextWrapping="Wrap" />
-        <Button Content="OK" HorizontalAlignment="Right" Click="OkButton_OnClick" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Content="はい" Click="YesButton_OnClick" />
+            <Button Content="いいえ" Click="NoButton_OnClick" />
+        </StackPanel>
     </StackPanel>
 </Window>

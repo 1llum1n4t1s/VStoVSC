@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using VS_to_VSC.Dialogs;
+using VS_to_VSC.Views.Dialogs;
 
 namespace VS_to_VSC.Services;
 

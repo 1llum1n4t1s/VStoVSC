@@ -1,10 +1,11 @@
 using Microsoft.Build.Construction;
 using Microsoft.Build.Locator;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Xml.Linq;
 
-namespace VS_to_VSC;
+namespace VS_to_VSC.Services;
 
 /// <summary>
 /// VSCode設定ファイル生成を担当するクラス
@@ -346,7 +347,7 @@ public partial class VSCodeGenerator
     }
 
     /// <summary>
-    /// launch.jsonファイルを生成する
+    /// launch.jsonファイルを生成する（マルチスタートアップ対応：実行可能プロジェクトごとに構成を出力し、2つ以上ある場合は compound を追加）
     /// </summary>
     /// <param name="vscodeDir">.vscodeディレクトリのパス</param>
     /// <param name="solutionPath">ソリューションファイルのパス</param>
@@ -356,43 +357,53 @@ public partial class VSCodeGenerator
         var solutionDir = Path.GetDirectoryName(solutionPath)!;
         try
         {
-            // ソリューションファイルを解析してプロジェクト一覧を取得
             var projects = GetProjects(solutionPath);
-
-            ProjectInfo? startupProject = null;
-
-            if (projects.Count == 1)
+            var executableProjects = projects.Where(p => IsExecutableProject(p.AbsolutePath)).ToList();
+            if (executableProjects.Count == 0)
             {
-                // プロジェクトが1つだけならそれをスタートアップとする
-                startupProject = projects[0];
+                return;
             }
-            else if (projects.Count > 1)
-            {
-                // 複数のプロジェクトがある場合、OutputTypeがExeまたはWinExeのものを探す
-                var executableProjects = projects.Where(p => IsExecutableProject(p.AbsolutePath)).ToList();
 
-                if (executableProjects.Count == 1)
+            var configurations = new List<object>();
+            var configNames = new List<string>();
+            foreach (var project in executableProjects)
+            {
+                var config = CreateLaunchConfigEntry(project, solutionDir, solutionName);
+                if (config != null)
                 {
-                    // 実行可能プロジェクトが1つだけならそれをスタートアップとする
-                    startupProject = executableProjects[0];
+                    configurations.Add(config);
+                    configNames.Add($".NET Launch ({project.ProjectName})");
                 }
             }
-
-            // スタートアッププロジェクトが特定できた場合のみlaunch.jsonを生成
-            if (startupProject != null)
+            if (configurations.Count == 0)
             {
-                var launchConfig = CreateLaunchConfig(startupProject, solutionDir, solutionName);
-                if (launchConfig != null)
-                {
-                    var launchPath = Path.Combine(vscodeDir, LaunchJsonFileName);
-                    SaveJsonFile(launchPath, launchConfig);
-                    LogMessage($"launch.json生成完了: {startupProject.ProjectName}");
-                }
+                return;
             }
+
+            object launchRoot = configurations.Count >= 2
+                ? new
+                {
+                    version = LaunchVersion,
+                    configurations,
+                    compounds = new[]
+                    {
+                        new
+                        {
+                            name = "すべて起動",
+                            configurations = configNames
+                        }
+                    }
+                }
+                : new { version = LaunchVersion, configurations };
+
+            var launchPath = Path.Combine(vscodeDir, LaunchJsonFileName);
+            SaveJsonFile(launchPath, launchRoot);
+            LogMessage(configurations.Count >= 2
+                ? $"launch.json生成完了: {configurations.Count}個の構成 + マルチスタートアップ (すべて起動)"
+                : $"launch.json生成完了: {executableProjects[0].ProjectName}");
         }
         catch (Exception ex)
         {
-            // エラーが発生しても処理を継続するため、ログ出力のみ行う
             LogMessage($"launch.json生成中にエラーが発生: {ex.Message}");
         }
     }
@@ -436,13 +447,62 @@ public partial class VSCodeGenerator
     private List<ProjectInfo> GetProjects(string solutionPath)
     {
         var extension = Path.GetExtension(solutionPath).ToLowerInvariant();
+        if (extension == ".sln")
+        {
+            var slnxPath = Path.ChangeExtension(solutionPath, ".slnx");
+            if (!File.Exists(slnxPath))
+            {
+                RunDotnetSlnMigrate(solutionPath);
+            }
+            if (File.Exists(slnxPath))
+            {
+                return GetProjectsFromSlnx(slnxPath);
+            }
+        }
         if (extension == ".slnx")
         {
             return GetProjectsFromSlnx(solutionPath);
         }
-        else
+        return GetProjectsFromSln(solutionPath);
+    }
+
+    /// <summary>
+    /// dotnet sln migrate を実行して .sln から .slnx を生成する
+    /// </summary>
+    /// <param name="solutionPath">.sln ファイルのパス</param>
+    private void RunDotnetSlnMigrate(string solutionPath)
+    {
+        var solutionDir = Path.GetDirectoryName(solutionPath);
+        if (string.IsNullOrEmpty(solutionDir))
         {
-            return GetProjectsFromSln(solutionPath);
+            return;
+        }
+        try
+        {
+            using var process = new Process();
+            process.StartInfo.FileName = "dotnet";
+            process.StartInfo.Arguments = "sln migrate";
+            process.StartInfo.WorkingDirectory = solutionDir;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.Start();
+            var stdout = process.StandardOutput.ReadToEnd();
+            var stderr = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            if (process.ExitCode == 0)
+            {
+                LogMessage(".slnx ファイルを dotnet sln migrate で生成しました。");
+            }
+            else
+            {
+                LogMessage($"dotnet sln migrate が終了コード {process.ExitCode} で終了しました。{stderr}");
+            }
+        }
+        catch (Exception ex)
+        {
+            LogMessage($"dotnet sln migrate の実行中にエラーが発生しました: {ex.Message}");
         }
     }
 
@@ -529,13 +589,13 @@ public partial class VSCodeGenerator
     }
 
     /// <summary>
-    /// launch.json用の設定オブジェクトを作成する
+    /// launch.json の1件分の構成オブジェクトを作成する
     /// </summary>
     /// <param name="projectInfo">対象プロジェクトの情報</param>
     /// <param name="solutionDir">ソリューションディレクトリのパス</param>
     /// <param name="solutionName">ソリューション名</param>
-    /// <returns>launch.json用の匿名オブジェクト</returns>
-    private object? CreateLaunchConfig(ProjectInfo projectInfo, string solutionDir, string solutionName)
+    /// <returns>1件分の構成オブジェクト。失敗時は null</returns>
+    private object? CreateLaunchConfigEntry(ProjectInfo projectInfo, string solutionDir, string solutionName)
     {
         var projectPath = projectInfo.AbsolutePath;
         var projectDir = Path.GetDirectoryName(projectPath)!;
@@ -586,25 +646,17 @@ public partial class VSCodeGenerator
                 type = "coreclr";
             }
 
-            // launch.json の構造を構築
             return new
             {
-                version = LaunchVersion,
-                configurations = new[]
-                {
-                    new
-                    {
-                        name = $".NET Launch ({projectName})",
-                        type,
-                        request = "launch",
-                        preLaunchTask = $"ビルド - {solutionName} ソリューション - Debug",
-                        program = programPath,
-                        args = Array.Empty<string>(),
-                        cwd = $"${{workspaceFolder}}/{normalizedRelativePath.TrimEnd('/')}",
-                        console = "internalConsole",
-                        stopAtEntry = false
-                    }
-                }
+                name = $".NET Launch ({projectName})",
+                type,
+                request = "launch",
+                preLaunchTask = $"ビルド - {solutionName} ソリューション - Debug",
+                program = programPath,
+                args = Array.Empty<string>(),
+                cwd = $"${{workspaceFolder}}/{normalizedRelativePath.TrimEnd('/')}",
+                console = "internalConsole",
+                stopAtEntry = false
             };
         }
         catch

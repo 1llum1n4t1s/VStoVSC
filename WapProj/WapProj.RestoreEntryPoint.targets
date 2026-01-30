@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- WAP の Build より前にエントリプロジェクトを obj\wappublish\win-x64 で復元する（DesktopBridge より前に登録するため別ファイルで定義） -->
+  <Target Name="_RestoreEntryPointForWapPublish" BeforeTargets="Build">
+    <PropertyGroup>
+      <_WapEntryPointPath>$(MSBuildProjectDirectory)\$(EntryPointProjectUniqueName)</_WapEntryPointPath>
+      <_WapEntryPointDir>$([System.IO.Path]::GetDirectoryName('$(_WapEntryPointPath)'))</_WapEntryPointDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(_WapEntryPointDir)\obj\wappublish\win-x64" />
+    <Exec Command="dotnet restore . -r win-x64 /p:RestoreOutputPath=$(MSBuildProjectDirectory)\obj\wappublish\win-x64"
+          WorkingDirectory="$(_WapEntryPointDir)"
+          EnvironmentVariables="DOTNET_CLI_UI_LANGUAGE=en-US"
+          IgnoreExitCode="false" />
+  </Target>
+</Project>

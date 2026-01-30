@@ -21,7 +21,7 @@ jobs:
         run: dotnet restore VStoVSC.slnx
 
       - name: ビルド
-        run: dotnet build VStoVSC.slnx --configuration Release --no-restore
+        run: dotnet build VStoVSC.slnx --configuration Release --runtime win-x64 --no-restore
 
       - name: テスト実行
         run: dotnet test VStoVSC.slnx --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"

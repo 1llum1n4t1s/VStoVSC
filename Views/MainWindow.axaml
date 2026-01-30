@@ -2,13 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
         xmlns:vm="using:VS_to_VSC.ViewModels"
-        x:Class="VS_to_VSC.MainWindow"
+        x:Class="VS_to_VSC.Views.MainWindow"
         Title="VStoVSCode Converter"
         Width="500"
         Height="380"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
-        Icon="icon/app.ico">
+        Icon="avares://VStoVSC/icon/app.ico">
     <Grid RowDefinitions="Auto,*" Margin="30">
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
             <TextBlock Text="VStoVSCode Converter"
@@ -25,6 +25,7 @@
                 Cursor="Hand"
                 ToolTip.Tip="ここにファイルをドロップするか、クリックしてファイルを選択"
                 Padding="16"
+                DragDrop.AllowDrop="True"
                 PointerPressed="DropArea_OnPointerPressed">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="ここにファイルをドロップ"

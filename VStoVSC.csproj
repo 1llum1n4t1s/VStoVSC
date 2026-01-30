@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <RootNamespace>VStoVSC</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -12,6 +12,9 @@
     <Authors>ゆろち</Authors>
     <Title>VStoVSC</Title>
     <PublishSingleFile>false</PublishSingleFile>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,11 +26,16 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.11" />
     <PackageReference Include="Microsoft.Build" Version="18.0.2" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
-    <PackageReference Include="Velopack" Version="0.0.1298" />
   </ItemGroup>
 
-  <Target Name="CleanBinObjBeforeRestore" BeforeTargets="Restore">
+  <Target Name="CleanBinObjBeforeRestore" BeforeTargets="Restore" Condition="'$(RestoreOutputPath)'==''">
     <RemoveDir Directories="$(MSBuildProjectDirectory)\bin;$(MSBuildProjectDirectory)\obj" />
+  </Target>
+  <Target Name="RestoreWapPublishAssets" AfterTargets="Restore" Condition="'$(RestoreOutputPath)'==''">
+    <Exec Command="dotnet restore . -r win-x64 /p:RestoreOutputPath=$(MSBuildProjectDirectory)\obj\wappublish\win-x64" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="DOTNET_CLI_UI_LANGUAGE=en-US" />
+  </Target>
+  <Target Name="EnsureWapPublishAssetsBeforeBuild" BeforeTargets="Build" Condition="'$(RestoreOutputPath)'==''">
+    <Exec Command="dotnet restore . -r win-x64 /p:RestoreOutputPath=$(MSBuildProjectDirectory)\obj\wappublish\win-x64" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="DOTNET_CLI_UI_LANGUAGE=en-US" />
   </Target>
 
 </Project>

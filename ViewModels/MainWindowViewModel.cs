@@ -12,7 +12,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     private bool _isDragOver;
     private readonly IFilePickerService _filePicker;
     private readonly IDialogService _dialog;
-    private readonly Action<string> _logCallback;
+    private readonly VSCodeGenerator _generator;
 
     /// <summary>
     /// ドロップエリア上にドラッグ中かどうか
@@ -33,11 +33,12 @@ public sealed class MainWindowViewModel : ViewModelBase
     /// </summary>
     /// <param name="filePicker">ファイル選択サービス</param>
     /// <param name="dialog">ダイアログサービス</param>
-    public MainWindowViewModel(IFilePickerService filePicker, IDialogService dialog)
+    /// <param name="generator">VSCode 設定生成サービス</param>
+    public MainWindowViewModel(IFilePickerService filePicker, IDialogService dialog, VSCodeGenerator generator)
     {
         _filePicker = filePicker;
         _dialog = dialog;
-        _logCallback = _ => { };
+        _generator = generator;
         PickFileCommand = new RelayCommand(_ => _ = PickFileAndConvertAsync());
     }
 
@@ -79,8 +80,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             if (!await ValidateSolutionPathAsync(solutionPath).ConfigureAwait(true))
                 return;
 
-            var generator = new VSCodeGenerator(_logCallback);
-            await generator.GenerateVSCodeFilesAsync(solutionPath,
+            await _generator.GenerateVSCodeFilesAsync(solutionPath,
                 message => _dialog.ConfirmYesNoAsync("確認", message)).ConfigureAwait(true);
 
             var successMessage = $"変換が完了しました。\n\nソリューションファイル: {Path.GetFileName(solutionPath)}\n\n.vscodeフォルダに設定ファイルが生成されました。";

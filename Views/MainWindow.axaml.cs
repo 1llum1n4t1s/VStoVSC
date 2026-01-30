@@ -5,10 +5,10 @@ using Avalonia.Platform.Storage;
 using VS_to_VSC.Services;
 using VS_to_VSC.ViewModels;
 
-namespace VS_to_VSC;
+namespace VS_to_VSC.Views;
 
 /// <summary>
-/// MainWindow のロジックを管理するクラス
+/// メインウィンドウの View
 /// </summary>
 public partial class MainWindow : Window
 {
@@ -20,10 +20,14 @@ public partial class MainWindow : Window
         InitializeComponent();
         var filePicker = new FilePickerService(() => StorageProvider);
         var dialog = new DialogService(() => this);
-        DataContext = new MainWindowViewModel(filePicker, dialog);
-        AddHandler(DragDrop.DragOverEvent, DropArea_DragOver);
-        AddHandler(DragDrop.DropEvent, DropArea_Drop);
-        AddHandler(DragDrop.DragLeaveEvent, DropArea_DragLeave);
+        var generator = new VSCodeGenerator(_ => { });
+        DataContext = new MainWindowViewModel(filePicker, dialog, generator);
+        if (this.FindControl<Border>("DropArea") is { } dropArea)
+        {
+            dropArea.AddHandler(DragDrop.DragOverEvent, DropArea_DragOver);
+            dropArea.AddHandler(DragDrop.DropEvent, DropArea_Drop);
+            dropArea.AddHandler(DragDrop.DragLeaveEvent, DropArea_DragLeave);
+        }
     }
 
     private async void DropArea_OnPointerPressed(object? sender, PointerPressedEventArgs e)

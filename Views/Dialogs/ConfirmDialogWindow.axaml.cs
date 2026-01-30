@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace VS_to_VSC.Dialogs;
+namespace VS_to_VSC.Views.Dialogs;
 
 /// <summary>
 /// Yes/No 確認用のモーダルダイアログ
