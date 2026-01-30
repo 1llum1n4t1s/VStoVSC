@@ -41,9 +41,12 @@
     <NoWarn>$(NoWarn);NU1702;NU1503</NoWarn>
     <EntryPointProjectUniqueName>..\VStoVSC.csproj</EntryPointProjectUniqueName>
     <AppxPackageDir>AppxPackages</AppxPackageDir>
-    <GenerateAppxPackageOnBuild>true</GenerateAppxPackageOnBuild>
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
     <ApplicationVersion Condition="'$(Version)' != ''">$(Version).0</ApplicationVersion>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxBundle>Always</AppxBundle>
+    <UapAppxPackageBuildMode>StoreUpload</UapAppxPackageBuildMode>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -61,7 +64,9 @@
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VStoVSC.csproj" />
+    <ProjectReference Include="..\VStoVSC.csproj">
+      <TargetPlatform>x64</TargetPlatform>
+    </ProjectReference>
   </ItemGroup>
   <Target Name="UpdateAppxManifestVersion" BeforeTargets="BeforeBuild">
     <XmlPoke XmlInputPath="Package.appxmanifest" Query="/Package/Identity/@Version" Value="$(Version).0" />
