@@ -44,6 +44,8 @@
     <GenerateAppxPackageOnBuild>true</GenerateAppxPackageOnBuild>
     <ApplicationVersion Condition="'$(Version)' != ''">$(Version).0</ApplicationVersion>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
