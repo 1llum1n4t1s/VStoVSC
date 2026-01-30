@@ -440,30 +440,33 @@ public partial class VSCodeGenerator
     }
 
     /// <summary>
+    /// .sln の場合は .slnx を用意して返す。それ以外はそのまま返す。
+    /// </summary>
+    /// <param name="solutionPath">ソリューションファイルのパス</param>
+    /// <returns>出力用に使うソリューションパス（.slnx 優先）</returns>
+    private string GetSolutionPathForOutput(string solutionPath)
+    {
+        var extension = Path.GetExtension(solutionPath).ToLowerInvariant();
+        if (extension != ".sln")
+            return solutionPath;
+        var slnxPath = Path.ChangeExtension(solutionPath, ".slnx");
+        if (!File.Exists(slnxPath))
+            RunDotnetSlnMigrate(solutionPath);
+        return File.Exists(slnxPath) ? slnxPath : solutionPath;
+    }
+
+    /// <summary>
     /// ソリューションファイルからプロジェクト一覧を取得する
     /// </summary>
     /// <param name="solutionPath">ソリューションファイルのパス</param>
     /// <returns>プロジェクト情報のリスト</returns>
     private List<ProjectInfo> GetProjects(string solutionPath)
     {
-        var extension = Path.GetExtension(solutionPath).ToLowerInvariant();
-        if (extension == ".sln")
-        {
-            var slnxPath = Path.ChangeExtension(solutionPath, ".slnx");
-            if (!File.Exists(slnxPath))
-            {
-                RunDotnetSlnMigrate(solutionPath);
-            }
-            if (File.Exists(slnxPath))
-            {
-                return GetProjectsFromSlnx(slnxPath);
-            }
-        }
+        var pathForOutput = GetSolutionPathForOutput(solutionPath);
+        var extension = Path.GetExtension(pathForOutput).ToLowerInvariant();
         if (extension == ".slnx")
-        {
-            return GetProjectsFromSlnx(solutionPath);
-        }
-        return GetProjectsFromSln(solutionPath);
+            return GetProjectsFromSlnx(pathForOutput);
+        return GetProjectsFromSln(pathForOutput);
     }
 
     /// <summary>
@@ -779,7 +782,8 @@ public partial class VSCodeGenerator
     {
         var solutionDir = Path.GetDirectoryName(solutionPath)!;
         var solutionName = Path.GetFileNameWithoutExtension(solutionPath);
-        var solutionFileName = Path.GetFileName(solutionPath);
+        var pathForOutput = GetSolutionPathForOutput(solutionPath);
+        var solutionFileName = Path.GetFileName(pathForOutput);
         var vscodeDir = Path.Combine(solutionDir, VSCodeDirectoryName);
 
         if (Directory.Exists(vscodeDir))
