@@ -12,9 +12,10 @@
     <Authors>ゆろち</Authors>
     <Title>VStoVSC</Title>
     <PublishSingleFile>false</PublishSingleFile>
-    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Platforms>x64</Platforms>
     <PlatformTarget>x64</PlatformTarget>
+    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <ItemGroup>
