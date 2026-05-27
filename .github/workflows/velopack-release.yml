@@ -49,12 +49,14 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      # lockfile の RID 整合性を保つために -r win-x64 付きで一度だけ restore する
-      # (_global/systemPatterns.md "lockfile の RID 整合性を保つ手順" に従う)
-      - name: 復元 (RID 込み)
-        run: dotnet restore VStoVSC.slnx -r win-x64 --force-evaluate
+      # restore と publish のパラメータを完全に一致させる (Codex P1 指摘 #3312152665 対応)。
+      # csproj は <SelfContained>false</SelfContained> なので、publish 時のみ
+      # --self-contained true で上書きするが、restore 時にも -p:SelfContained=true を
+      # 渡しておかないと runtime packs が assets.json に入らず、--no-restore で
+      # NETSDK1112 ("publish parameters are different than what's in the project file") が出る。
+      - name: 復元 (RID + SelfContained 込み)
+        run: dotnet restore src/VStoVSC/VStoVSC.csproj -r win-x64 --force-evaluate -p:SelfContained=true
 
-      # SelfContained=true で .NET 10 runtime を同梱
       # MSBuild.Locator はユーザー側 Visual Studio の MSBuild を動的解決するため
       # SelfContained でも問題なく動く (アプリ本体は self-contained / MSBuild は外部)
       - name: 公開
