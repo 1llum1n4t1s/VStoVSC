@@ -129,7 +129,9 @@ public partial class App : Application
         if (string.IsNullOrEmpty(localeKey)) return;
         if (string.Equals(_activeLocaleKey, localeKey, StringComparison.OrdinalIgnoreCase)) return;
 
-        if (Resources[localeKey] is not IResourceProvider targetLocale)
+        // CodeRabbit #3312176135 対応: ResourceDictionary のインデクサは KeyNotFoundException を投げるため
+        // TryGetResource を使って未登録キーでも例外を出さずに警告ログだけで早期 return する。
+        if (!Resources.TryGetResource(localeKey, null, out var resource) || resource is not IResourceProvider targetLocale)
         {
             Logger.Log($"未登録のロケールが指定されました: {localeKey}", LogLevel.Warning);
             return;

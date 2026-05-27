@@ -38,7 +38,10 @@ public static class UpdateChecker
 
         var channel = string.IsNullOrWhiteSpace(settings.UpdateChannel) ? "win" : settings.UpdateChannel;
         var source = new SimpleWebSource(baseUrl);
-        return (new UpdateManager(source), baseUrl, channel);
+        // CodeRabbit #3312176160 対応: Velopack 1.0.x の UpdateManager.CheckForUpdatesAsync は引数で channel を取れないため
+        // UpdateOptions.ExplicitChannel で明示する。これがないと installed channel に依存し、設定変更が反映されない。
+        var options = new UpdateOptions { ExplicitChannel = channel };
+        return (new UpdateManager(source, options), baseUrl, channel);
     }
 
     /// <summary>

@@ -12,8 +12,15 @@ public sealed class SettingsManager
     /// <summary>シングルトンインスタンス</summary>
     public static SettingsManager Instance => _instance.Value;
 
-    /// <summary>現在の設定 (読み取り専用)</summary>
-    public Settings Current => _settings;
+    /// <summary>
+    /// 現在の設定のスナップショット (浅いコピー)。
+    /// 呼び出し側は読み取り専用として扱う想定。書き換えは <see cref="Mutate"/> / <see cref="MutateAndSave"/> 経由で。
+    /// CodeRabbit #3312176151 対応: 可変インスタンスの直返しを避け、外部からの mutation で排他制御を回避されないようにする。
+    /// </summary>
+    public Settings Current
+    {
+        get { lock (_lock) return _settings.Snapshot(); }
+    }
 
     /// <summary>並列処理向けの浅いコピー</summary>
     public Settings CreateSnapshot()

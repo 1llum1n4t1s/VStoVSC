@@ -9,10 +9,11 @@ namespace VStoVSC.ViewModels;
 /// <summary>
 /// メインウィンドウの ViewModel (CommunityToolkit.Mvvm)
 /// </summary>
-public sealed partial class MainWindowViewModel : ObservableObject
+public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
 {
     private readonly IFilePickerService _filePicker;
     private readonly VSCodeGenerator _generator;
+    private bool _disposed;
 
     [ObservableProperty]
     private bool _isDragOver;
@@ -45,6 +46,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private void OnUpdateCheckStateChanged(bool inProgress)
     {
         Avalonia.Threading.Dispatcher.UIThread.Post(() => IsCheckingUpdate = inProgress);
+    }
+
+    /// <summary>
+    /// CodeRabbit #3312176240 対応: App.UpdateCheckStateChanged は static event なので、
+    /// VM 破棄時に必ず解除しないとウィンドウ再生成でハンドラ重複 + メモリ保持 (leak) になる。
+    /// MainWindow.OnClosed から (DataContext as IDisposable)?.Dispose() で呼ばれる。
+    /// </summary>
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        App.UpdateCheckStateChanged -= OnUpdateCheckStateChanged;
     }
 
     /// <summary>

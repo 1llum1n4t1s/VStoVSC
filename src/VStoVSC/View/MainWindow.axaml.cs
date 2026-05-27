@@ -44,6 +44,17 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
+    /// ウィンドウクローズ時に ViewModel の購読を解除する。
+    /// CodeRabbit #3312176240 対応: <c>App.UpdateCheckStateChanged</c> は static event のため、
+    /// ここで明示的に <see cref="IDisposable.Dispose"/> を呼ばないとハンドラと VM が leak する。
+    /// </summary>
+    protected override void OnClosed(EventArgs e)
+    {
+        (DataContext as IDisposable)?.Dispose();
+        base.OnClosed(e);
+    }
+
+    /// <summary>
     /// OS のアクセントカラーを取得してオーバーレイに適用
     /// </summary>
     private void ApplyAccentOverlay()
@@ -71,6 +82,19 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
+    /// D&D エリアフォーカス時に Enter/Space を押下 → ファイル選択ダイアログ
+    /// CodeRabbit #3312176201 対応 (キーボードアクセシビリティ)
+    /// </summary>
+    private async void DropArea_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if ((e.Key == Key.Enter || e.Key == Key.Space) && DataContext is MainWindowViewModel vm)
+        {
+            e.Handled = true;
+            await vm.PickFileAndConvertAsync();
+        }
+    }
+
+    /// <summary>
     /// ドラッグオーバー：オーバーレイを表示 + DragEffects.Copy 設定
     /// </summary>
     private void DropZone_DragOver(object? sender, DragEventArgs e)
@@ -85,7 +109,12 @@ public partial class MainWindow : Window
         }
         else
         {
+            // CodeRabbit #3312176210 対応: 非ファイルドラッグ時もオーバーレイ状態をリセットして残留を防ぐ
             e.DragEffects = DragDropEffects.None;
+            if (_dropOverlay != null)
+                _dropOverlay.IsVisible = false;
+            if (DataContext is MainWindowViewModel vm)
+                vm.IsDragOver = false;
         }
         e.Handled = true;
     }

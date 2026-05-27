@@ -47,7 +47,8 @@
 
             <!-- ━━━ D&D エリア (中央、大きく) ━━━ -->
             <!-- 通常時は ContainerAlt (バージョンカードより少し凹んだ統一感のあるダーク)。
-                 ドラッグオーバー中は前面に出る DropOverlay が青フチでフィードバックを与える。 -->
+                 ドラッグオーバー中は前面に出る DropOverlay が青フチでフィードバックを与える。
+                 CodeRabbit #3312176201 対応: Focusable + KeyDown でキーボード (Enter/Space) からもファイル選択を起動可能にする。 -->
             <Border
                 Grid.Row="0"
                 Margin="0,0,0,16"
@@ -57,7 +58,11 @@
                 BorderThickness="1"
                 CornerRadius="14"
                 Cursor="Hand"
+                Focusable="True"
+                KeyDown="DropArea_KeyDown"
                 PointerPressed="DropArea_PointerPressed"
+                AutomationProperties.Name="{DynamicResource Text.DropZone.Message}"
+                AutomationProperties.HelpText="{DynamicResource Text.DropZone.Footer}"
                 ToolTip.Tip="{DynamicResource Text.DropZone.Footer}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock
