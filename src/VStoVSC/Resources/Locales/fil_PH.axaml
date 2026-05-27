@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">I-drag at i-drop dito</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">o mag-click para pumili ng file</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">.sln o .slnx na file</x:String>
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">Kumpirmahin</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">OK</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">Kanselahin</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">Oo</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">Hindi</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">Error</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Impormasyon</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Babala</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Tapos na</x:String>
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Tapos ang Conversion</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Matagumpay na na-convert ang {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Error sa Conversion</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Pumili ng .sln o .slnx file</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Hindi nahanap ang file: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">May nangyaring error: {0}</x:String>
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">Tungkol</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">Bersyon</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Tingnan ang updates</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">Lisensya</x:String>
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">Updated ka na</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">May bagong bersyon na available</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">Tinitingnan ang updates...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">Dina-download ang update...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">Na-download na ang update</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">Nag-timeout ang pagcheck ng update</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">Nag-timeout ang pagda-download ng update</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">Hindi makapag-check ng updates</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">May nangyaring error sa update</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">Hindi naka-configure ang update server</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">Nilaktawan sa development mode</x:String>
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">May Update</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">May bagong bersyon ng VStoVSC na available</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">I-download at i-install</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">Laktawan ang bersyong ito</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">Ginagamit mo na ang pinakabagong bersyon</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">May nangyaring error sa pagcheck ng updates</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">Tinitingnan ang updates...</x:String>
+  <x:String x:Key="Text.Close" xml:space="preserve">Isara</x:String>
+</ResourceDictionary>

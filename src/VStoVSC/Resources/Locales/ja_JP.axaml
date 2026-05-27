@@ -1,0 +1,58 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">ここにドラッグ＆ドロップ</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">またはクリックしてファイルを選択</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">.sln または .slnx ファイル</x:String>
+
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">確認</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">OK</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">キャンセル</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">はい</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">いいえ</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">エラー</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">情報</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">警告</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">完了</x:String>
+
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">変換完了</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} の変換が完了しました</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">変換エラー</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln または .slnx ファイルを選択してください</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">ファイルが見つかりません: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">エラーが発生しました: {0}</x:String>
+
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">バージョン情報</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">バージョン</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">更新を確認</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 ゆろち</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">ライセンス</x:String>
+
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">最新版です</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">新しいバージョンが利用可能です</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">更新を確認中...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">更新をダウンロード中...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">更新のダウンロードが完了しました</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">更新確認がタイムアウトしました</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">更新のダウンロードがタイムアウトしました</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">更新確認に失敗しました</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">更新中にエラーが発生しました</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">更新サーバーが設定されていません</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">開発モードのため更新をスキップしました</x:String>
+
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">更新可能</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">VStoVSC の新しいバージョンが利用可能です</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">ダウンロードしてインストール</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">このバージョンをスキップ</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">最新版を使用しています</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">更新確認中にエラーが発生しました</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">更新を確認中...</x:String>
+
+  <x:String x:Key="Text.Close" xml:space="preserve">閉じる</x:String>
+
+</ResourceDictionary>

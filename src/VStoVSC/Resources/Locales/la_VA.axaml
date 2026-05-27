@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">Hic trahe et demitte</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">aut preme ad fasciculum seligendum</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">Fasciculi .sln vel .slnx</x:String>
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">Confirma</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">OK</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">Abrogare</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">Ita</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">Non</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">Error</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Informatio</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Monitio</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Completum</x:String>
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Conversio Completa</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} feliciter conversum est</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Error Conversionis</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Elige fasciculum .sln vel .slnx</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Fasciculus non inventus: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Error occurrit: {0}</x:String>
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">De</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">Versio</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Inspice renovationes</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">Licentia</x:String>
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">Es in versione novissima</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">Nova versio est in promptu</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">Renovationes inspiciuntur...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">Renovatio descenditur...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">Renovatio descensa est</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">Tempus inspectionis exhaustum</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">Tempus descensionis exhaustum</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">Renovationes inspici non potuerunt</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">Error in renovatione occurrit</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">Servus renovationis non configuratus</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">In modo evolutionis omittitur</x:String>
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">Renovatio in promptu</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">Nova versio VStoVSC in promptu est</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">Descende et installa</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">Hanc versionem omitte</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">Versione novissima uteris</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">Error dum renovationes inspiciuntur</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">Renovationes inspiciuntur...</x:String>
+  <x:String x:Key="Text.Close" xml:space="preserve">Claude</x:String>
+</ResourceDictionary>

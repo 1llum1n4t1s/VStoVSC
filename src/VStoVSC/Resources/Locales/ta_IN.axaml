@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">இங்கே இழுத்து விடுங்கள்</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">அல்லது கோப்பைத் தேர்ந்தெடுக்க கிளிக் செய்யவும்</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">.sln அல்லது .slnx கோப்புகள்</x:String>
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">உறுதிப்படுத்து</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">சரி</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">ரத்து</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">ஆம்</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">இல்லை</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">பிழை</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">தகவல்</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">எச்சரிக்கை</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">முடிந்தது</x:String>
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">மாற்றம் முடிந்தது</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} வெற்றிகரமாக மாற்றப்பட்டது</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">மாற்ற பிழை</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln அல்லது .slnx கோப்பைத் தேர்ந்தெடுக்கவும்</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">கோப்பு கிடைக்கவில்லை: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">பிழை ஏற்பட்டது: {0}</x:String>
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">பற்றி</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">பதிப்பு</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">புதுப்பிப்புகளைச் சரிபார்</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">உரிமம்</x:String>
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">நீங்கள் சமீபத்திய பதிப்பில் உள்ளீர்கள்</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">புதிய பதிப்பு கிடைக்கிறது</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">புதுப்பிப்புகளைச் சரிபார்க்கிறது...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">புதுப்பிப்பு பதிவிறக்கம்...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">புதுப்பிப்பு பதிவிறக்கப்பட்டது</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">புதுப்பிப்பு சரிபார்ப்பு நேரம் முடிந்தது</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">புதுப்பிப்பு பதிவிறக்க நேரம் முடிந்தது</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">புதுப்பிப்புகளை சரிபார்க்க முடியவில்லை</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">புதுப்பிப்பின் போது பிழை</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">புதுப்பிப்பு சேவையகம் கட்டமைக்கப்படவில்லை</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">மேம்பாட்டு முறையில் தவிர்க்கப்பட்டது</x:String>
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">புதுப்பிப்பு கிடைக்கிறது</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">VStoVSC இன் புதிய பதிப்பு கிடைக்கிறது</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">பதிவிறக்கி நிறுவவும்</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">இந்த பதிப்பைத் தவிர்</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">நீங்கள் சமீபத்திய பதிப்பைப் பயன்படுத்துகிறீர்கள்</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">புதுப்பிப்புகளைச் சரிபார்க்கும் போது பிழை</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">புதுப்பிப்புகளைச் சரிபார்க்கிறது...</x:String>
+  <x:String x:Key="Text.Close" xml:space="preserve">மூடு</x:String>
+</ResourceDictionary>

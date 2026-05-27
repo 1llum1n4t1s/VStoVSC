@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">अत्र आकर्षणं विमोचनं च कुरुत</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">अथवा सञ्चिकां चिनोतु इति नुदतु</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">.sln अथवा .slnx सञ्चिकाः</x:String>
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">पुष्टीकरोतु</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">समीचीनम्</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">निरस्तं कुरुत</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">आम्</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">न</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">दोषः</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">सूचना</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">चेतावनी</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">समाप्तम्</x:String>
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">परिवर्तनं समाप्तम्</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} सफलतया परिवर्तितम्</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">परिवर्तनदोषः</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln अथवा .slnx सञ्चिकां चिनोतु</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">सञ्चिका न प्राप्ता: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">दोषः अभवत्: {0}</x:String>
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">विषये</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">संस्करणम्</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">अद्यतनं परीक्षयतु</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">अनुज्ञापत्रम्</x:String>
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">भवान् नवीनतमं संस्करणं प्रयुनक्ति</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">नवीनं संस्करणं उपलब्धम्</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">अद्यतनं परीक्ष्यते...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">अद्यतनं अवतार्यते...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">अद्यतनं अवतारितम्</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">अद्यतनपरीक्षणे कालातीतम्</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">अद्यतनावतारणे कालातीतम्</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">अद्यतनं परीक्षितुं न शक्तम्</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">अद्यतनसमये दोषः अभवत्</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">अद्यतनसेवकं न विन्यस्तम्</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">विकासरीत्यां परित्यक्तम्</x:String>
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">अद्यतनं उपलब्धम्</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">VStoVSC इत्यस्य नवीनं संस्करणं उपलब्धम्</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">अवतार्य संस्थापयतु</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">इदं संस्करणं परित्यजतु</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">भवान् नवीनतमं संस्करणं प्रयुनक्ति</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">अद्यतनपरीक्षणे दोषः अभवत्</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">अद्यतनं परीक्ष्यते...</x:String>
+  <x:String x:Key="Text.Close" xml:space="preserve">पिधेहि</x:String>
+</ResourceDictionary>

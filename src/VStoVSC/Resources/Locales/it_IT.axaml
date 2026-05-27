@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">Trascina qui</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">o fai clic per selezionare un file</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">File .sln o .slnx</x:String>
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">Conferma</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">OK</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">Annulla</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">Sì</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">No</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">Errore</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Informazione</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Avviso</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Completato</x:String>
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Conversione completata</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} convertito con successo</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Errore di conversione</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Selezionare un file .sln o .slnx</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">File non trovato: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Si è verificato un errore: {0}</x:String>
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">Informazioni</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">Versione</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Cerca aggiornamenti</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">Licenza</x:String>
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">Sei aggiornato</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">È disponibile una nuova versione</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">Verifica aggiornamenti...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">Scaricamento aggiornamento...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">Aggiornamento scaricato</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">Timeout del controllo aggiornamenti</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">Timeout del download dell'aggiornamento</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">Impossibile verificare gli aggiornamenti</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">Si è verificato un errore durante l'aggiornamento</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">Server di aggiornamenti non configurato</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">Saltato in modalità sviluppo</x:String>
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">Aggiornamento disponibile</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">È disponibile una nuova versione di VStoVSC</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">Scarica e installa</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">Salta questa versione</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">Stai usando l'ultima versione</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">Si è verificato un errore durante il controllo degli aggiornamenti</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">Verifica aggiornamenti...</x:String>
+  <x:String x:Key="Text.Close" xml:space="preserve">Chiudi</x:String>
+</ResourceDictionary>
