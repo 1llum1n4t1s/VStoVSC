@@ -152,15 +152,39 @@ jobs:
           done
           echo "✅ R2 アップロード完了: $uploaded ファイル"
 
-      - name: 配信確認 (releases.win.json の HTTP 200 を検証)
+      # Codex #3312267284 対応: 単純な HTTP 200 だけだと CDN/edge が古い manifest を
+      # 返している間に cleanup が走り、旧 manifest を取得したクライアントが直後に消える
+      # .nupkg を取りに行って 404 失敗する race condition がある。
+      # ローカルアップロード済の manifest と完全一致するまでリトライしてから次へ進む。
+      - name: 配信確認 (releases.win.json がローカル manifest と一致するまで待機)
         run: |
           set -euo pipefail
           url="https://vs2vsc.nephilim.jp/releases.win.json"
-          echo "Checking: $url"
-          curl --fail --silent --show-error --max-time 30 \
-               --retry 3 --retry-delay 5 --retry-all-errors \
-               -o /dev/null -w "HTTP %{http_code} (%{size_download} bytes)\n" \
-               "$url"
+          local_manifest=$(jq -S -c . packages/releases.win.json)
+          echo "Local manifest digest: $(echo -n "$local_manifest" | sha256sum | head -c 16)"
+
+          # 最大 90 秒 (18 回 × 5 秒) 待つ。R2 + Cloudflare の伝播は通常 ~10 秒だが余裕を持たせる。
+          attempt=0
+          max_attempts=18
+          while [ "$attempt" -lt "$max_attempts" ]; do
+            attempt=$((attempt + 1))
+            echo "::group::Attempt $attempt / $max_attempts"
+            # Cache-Control ヘッダを bypass するためクエリ文字列でユニーク化
+            remote_manifest=$(curl --fail --silent --show-error --max-time 30 \
+              -H "Cache-Control: no-cache" \
+              "${url}?_=${GITHUB_RUN_ID}-${attempt}" | jq -S -c .)
+            echo "Remote manifest digest: $(echo -n "$remote_manifest" | sha256sum | head -c 16)"
+            if [ "$local_manifest" = "$remote_manifest" ]; then
+              echo "✅ Remote manifest matches local (attempt $attempt)"
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "⚠️ Remote manifest still old, waiting 5s..."
+            echo "::endgroup::"
+            sleep 5
+          done
+          echo "::error::Remote manifest did not propagate to match local within $((max_attempts * 5))s. Skipping cleanup to avoid race."
+          exit 1
 
       # 旧バージョン nupkg のクリーンアップ (Aggressive 戦略・Lhamiel から踏襲):
       # - releases.win.json (manifest) に含まれない *.nupkg を削除

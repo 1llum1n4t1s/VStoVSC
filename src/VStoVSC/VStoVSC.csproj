@@ -20,7 +20,9 @@
     <OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\</OutputPath>
     <IntermediateOutputPath>$(MSBuildThisFileDirectory)obj\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\</IntermediateOutputPath>
     <SelfContained>false</SelfContained>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- Codex #3312267278 対応: GenerateAssemblyInfo を true (デフォルト) に戻して
+         Directory.Build.props の <Version>2.0.8</Version> を AssemblyVersion 属性へ自動注入する。
+         以前は false にして AssemblyInfo.cs で手書きしていたが、空ファイルになり VersionText が v0.0.0 表示になっていた。 -->
   </PropertyGroup>
 
   <PropertyGroup>
