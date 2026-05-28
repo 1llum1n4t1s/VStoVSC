@@ -6,7 +6,10 @@ on:
       - 'release/**'
 
 permissions:
-  contents: read
+  # 通常は contents: read (R2 単独配信)。
+  # ⚠️ 踏み台 publish (移行作業時の 1 回限り) のため一時的に write に上げている。
+  # 踏み台 publish 完了後は contents: read に戻して github-release job も削除すること。
+  contents: write
 
 # Codex P1 指摘対応 (Lhamiel から踏襲): 複数の release/** push が overlap した場合、
 # 古い run の cleanup step (manifest 外を削除) が、新しい run がアップロードしたばかりの
@@ -288,3 +291,48 @@ jobs:
             echo "::error::すべての削除が失敗しました。API token の権限・bucket 名を確認してください。"
             exit 1
           fi
+
+  # ⚠️ 踏み台 publish 用 (移行作業時の 1 回限り、/transfer-cf Step 11.5)。
+  # 旧 GithubSource クライアント (GitHub Releases を見る v2.0.4 以下) が R2 配信へ
+  # 自動移行できる「踏み台」を GitHub Releases に 1 個だけ publish する。
+  # 踏み台 publish 完了後はこの job 全体を削除して R2 単独配信に戻す。
+  github-release-bridge:
+    needs: [velopack, version, r2-upload]
+    name: GitHub Releases (踏み台 publish)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: リポジトリをチェックアウト
+        # actions/checkout@v4.2.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Velopack 成果物をダウンロード
+        # actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: velopack
+          path: packages
+
+      - name: 成果物を確認
+        run: ls -lh packages/
+
+      - name: GitHub Release を作成 + アセットアップロード
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          version="${{ needs.version.outputs.version }}"
+          gh release create "$version" \
+            --repo "${{ github.repository }}" \
+            --target "${{ github.sha }}" \
+            --title "VStoVSC $version" \
+            --notes "R2 配信への移行用踏み台リリース。旧 GithubSource クライアントはここから取得して R2 配信 (https://vs2vsc.nephilim.jp) へ自動移行されます。以降の通常リリースは R2 単独配信のため、この踏み台は移行作業時の 1 回限りです。"
+          for f in packages/*; do
+            echo "::group::Upload $(basename "$f")"
+            gh release upload "$version" "$f" --repo "${{ github.repository }}"
+            echo "::endgroup::"
+          done
+          echo "✅ 踏み台 publish 完了: $version"

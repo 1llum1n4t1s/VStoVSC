@@ -6,7 +6,7 @@
     <LangVersion>latest</LangVersion>
     <PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
     <Platforms>x64</Platforms>
-    <Version>2.0.8</Version>
+    <Version>2.0.9</Version>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!-- Avalonia の transitive 依存 Tmds.DBus.Protocol の脆弱性警告は Linux 用 D-Bus library で win-x64 では未使用のため抑制 -->
     <NoWarn>$(NoWarn);NU1903</NoWarn>
