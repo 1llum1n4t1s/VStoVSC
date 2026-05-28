@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <Version>2.0.8</Version>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Avalonia の transitive 依存 Tmds.DBus.Protocol の脆弱性警告は Linux 用 D-Bus library で win-x64 では未使用のため抑制 -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <AssemblyTitle>VStoVSC</AssemblyTitle>
+    <AssemblyDescription>Visual Studio ソリューション (.sln / .slnx) を VS Code 用に変換するツール</AssemblyDescription>
+    <AssemblyCompany>1llum1n4t1s</AssemblyCompany>
+    <AssemblyProduct>VStoVSC</AssemblyProduct>
+    <AssemblyCopyright>Copyright © 2026 ゆろち</AssemblyCopyright>
+    <Title>VStoVSC</Title>
+    <Authors>ゆろち</Authors>
+  </PropertyGroup>
+</Project>

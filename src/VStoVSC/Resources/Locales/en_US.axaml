@@ -1,0 +1,63 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Window -->
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+
+  <!-- Drop Zone -->
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">Drag &amp; drop here</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">or click to select a file</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">.sln or .slnx files</x:String>
+
+  <!-- Dialog -->
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">Confirm</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">OK</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">Cancel</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">Yes</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">No</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">Error</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Information</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Warning</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Completed</x:String>
+
+  <!-- Conversion Result -->
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Conversion Complete</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Successfully converted {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Conversion Error</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Please select a .sln or .slnx file</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">File not found: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">An error occurred: {0}</x:String>
+
+  <!-- Version -->
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">About</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">Version</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Check for updates</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">License</x:String>
+
+  <!-- Update -->
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">You are up to date</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">A new version is available</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">Checking for updates...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">Downloading update...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">Update downloaded</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">Update check timed out</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">Update download timed out</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">Failed to check for updates</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">An error occurred during update</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">Update server is not configured</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">Skipped in development mode</x:String>
+
+  <!-- Velopack Update Dialog -->
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">Update Available</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">A new version of VStoVSC is available</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">Download and install</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">Skip this version</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">You are using the latest version</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">An error occurred while checking for updates</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">Checking for updates...</x:String>
+
+  <!-- Common -->
+  <x:String x:Key="Text.Close" xml:space="preserve">Close</x:String>
+
+</ResourceDictionary>

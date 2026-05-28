@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">Перетягніть сюди</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">або клацніть, щоб вибрати файл</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">Файли .sln або .slnx</x:String>
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">Підтвердити</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">OK</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">Скасувати</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">Так</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">Ні</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">Помилка</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Інформація</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Попередження</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Завершено</x:String>
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Перетворення завершено</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} успішно перетворено</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Помилка перетворення</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Виберіть файл .sln або .slnx</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Файл не знайдено: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Сталася помилка: {0}</x:String>
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">Про програму</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">Версія</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Перевірити оновлення</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">Ліцензія</x:String>
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">У вас остання версія</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">Доступна нова версія</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">Перевірка оновлень...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">Завантаження оновлення...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">Оновлення завантажено</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">Час очікування перевірки оновлень минув</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">Час очікування завантаження минув</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">Не вдалося перевірити оновлення</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">Сталася помилка під час оновлення</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">Сервер оновлень не налаштовано</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">Пропущено в режимі розробки</x:String>
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">Доступне оновлення</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">Доступна нова версія VStoVSC</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">Завантажити та встановити</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">Пропустити цю версію</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">Ви використовуєте останню версію</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">Сталася помилка під час перевірки оновлень</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">Перевірка оновлень...</x:String>
+  <x:String x:Key="Text.Close" xml:space="preserve">Закрити</x:String>
+</ResourceDictionary>

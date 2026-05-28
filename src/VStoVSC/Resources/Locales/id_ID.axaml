@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">Seret &amp; jatuhkan di sini</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">atau klik untuk memilih file</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">File .sln atau .slnx</x:String>
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">Konfirmasi</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">OK</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">Batal</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">Ya</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">Tidak</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">Kesalahan</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Informasi</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Peringatan</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Selesai</x:String>
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Konversi Selesai</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Berhasil mengonversi {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Kesalahan Konversi</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Pilih file .sln atau .slnx</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">File tidak ditemukan: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Terjadi kesalahan: {0}</x:String>
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">Tentang</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">Versi</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Periksa pembaruan</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">Lisensi</x:String>
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">Anda sudah menggunakan versi terbaru</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">Versi baru tersedia</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">Memeriksa pembaruan...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">Mengunduh pembaruan...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">Pembaruan diunduh</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">Waktu pemeriksaan pembaruan habis</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">Waktu unduh pembaruan habis</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">Gagal memeriksa pembaruan</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">Terjadi kesalahan selama pembaruan</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">Server pembaruan belum dikonfigurasi</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">Dilewati dalam mode pengembangan</x:String>
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">Pembaruan Tersedia</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">Versi baru VStoVSC tersedia</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">Unduh dan pasang</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">Lewati versi ini</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">Anda menggunakan versi terbaru</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">Terjadi kesalahan saat memeriksa pembaruan</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">Memeriksa pembaruan...</x:String>
+  <x:String x:Key="Text.Close" xml:space="preserve">Tutup</x:String>
+</ResourceDictionary>

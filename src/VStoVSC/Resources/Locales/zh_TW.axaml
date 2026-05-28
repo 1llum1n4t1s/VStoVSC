@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://VStoVSC/Resources/Locales/en_US.axaml"/>
+  </ResourceDictionary.MergedDictionaries>
+
+  <x:String x:Key="Text.Window.Title" xml:space="preserve">VStoVSC</x:String>
+  <x:String x:Key="Text.DropZone.Message" xml:space="preserve">拖放到這裡</x:String>
+  <x:String x:Key="Text.DropZone.Hint" xml:space="preserve">或點擊選擇檔案</x:String>
+  <x:String x:Key="Text.DropZone.Footer" xml:space="preserve">.sln 或 .slnx 檔案</x:String>
+  <x:String x:Key="Text.Dialog.Confirm" xml:space="preserve">確認</x:String>
+  <x:String x:Key="Text.Dialog.OK" xml:space="preserve">確定</x:String>
+  <x:String x:Key="Text.Dialog.Cancel" xml:space="preserve">取消</x:String>
+  <x:String x:Key="Text.Dialog.Yes" xml:space="preserve">是</x:String>
+  <x:String x:Key="Text.Dialog.No" xml:space="preserve">否</x:String>
+  <x:String x:Key="Text.Dialog.Error" xml:space="preserve">錯誤</x:String>
+  <x:String x:Key="Text.Dialog.Info" xml:space="preserve">資訊</x:String>
+  <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">警告</x:String>
+  <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">完成</x:String>
+  <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">轉換完成</x:String>
+  <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">已成功轉換 {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">轉換錯誤</x:String>
+  <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">請選擇 .sln 或 .slnx 檔案</x:String>
+  <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">找不到檔案: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">發生錯誤: {0}</x:String>
+  <x:String x:Key="Text.Version.Header" xml:space="preserve">關於</x:String>
+  <x:String x:Key="Text.Version.Label" xml:space="preserve">版本</x:String>
+  <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">檢查更新</x:String>
+  <x:String x:Key="Text.Version.Copyright" xml:space="preserve">© 2026 Yurochi</x:String>
+  <x:String x:Key="Text.Version.License" xml:space="preserve">授權</x:String>
+  <x:String x:Key="Text.Update.Latest" xml:space="preserve">已是最新版本</x:String>
+  <x:String x:Key="Text.Update.Available" xml:space="preserve">有新版本可用</x:String>
+  <x:String x:Key="Text.Update.Checking" xml:space="preserve">正在檢查更新...</x:String>
+  <x:String x:Key="Text.Update.Downloading" xml:space="preserve">正在下載更新...</x:String>
+  <x:String x:Key="Text.Update.Downloaded" xml:space="preserve">更新已下載</x:String>
+  <x:String x:Key="Text.Update.Timeout" xml:space="preserve">更新檢查逾時</x:String>
+  <x:String x:Key="Text.Update.DownloadTimeout" xml:space="preserve">更新下載逾時</x:String>
+  <x:String x:Key="Text.Update.CheckError" xml:space="preserve">檢查更新失敗</x:String>
+  <x:String x:Key="Text.Update.Error" xml:space="preserve">更新過程中發生錯誤</x:String>
+  <x:String x:Key="Text.Update.RepoNotConfigured" xml:space="preserve">更新伺服器未設定</x:String>
+  <x:String x:Key="Text.Update.DevSkip" xml:space="preserve">開發模式下已略過</x:String>
+  <x:String x:Key="Text.SelfUpdate.Title" xml:space="preserve">可用更新</x:String>
+  <x:String x:Key="Text.SelfUpdate.Available" xml:space="preserve">VStoVSC 有新版本可用</x:String>
+  <x:String x:Key="Text.SelfUpdate.DownloadAndInstall" xml:space="preserve">下載並安裝</x:String>
+  <x:String x:Key="Text.SelfUpdate.IgnoreThisVersion" xml:space="preserve">略過此版本</x:String>
+  <x:String x:Key="Text.SelfUpdate.UpToDate" xml:space="preserve">您正在使用最新版本</x:String>
+  <x:String x:Key="Text.SelfUpdate.Error" xml:space="preserve">檢查更新時發生錯誤</x:String>
+  <x:String x:Key="Text.SelfUpdate.Checking" xml:space="preserve">正在檢查更新...</x:String>
+  <x:String x:Key="Text.Close" xml:space="preserve">關閉</x:String>
+</ResourceDictionary>

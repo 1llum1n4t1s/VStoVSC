@@ -1,6 +1,8 @@
 # ビルド成果物
 bin/
 obj/
+publish/
+artifacts/
 
 # Visual Studio 作業ディレクトリ
 .vs/
@@ -12,5 +14,8 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
-WapProj/AppxPackages/
-WapProj/BundleArtifacts/
+
+# 個人開発環境用 (MCP / Serena)
+.mcp.json
+.serena/
+.claude/

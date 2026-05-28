@@ -1,0 +1,56 @@
+<Application
+    x:Class="VStoVSC.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Resources/Themes.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Locale Resources。ApplyLocale 側で選択ロケールだけを MergedDictionaries に入れる -->
+            <ResourceInclude x:Key="en_US" Source="/Resources/Locales/en_US.axaml" />
+            <ResourceInclude x:Key="ja_JP" Source="/Resources/Locales/ja_JP.axaml" />
+            <ResourceInclude x:Key="zh_CN" Source="/Resources/Locales/zh_CN.axaml" />
+            <ResourceInclude x:Key="zh_TW" Source="/Resources/Locales/zh_TW.axaml" />
+            <ResourceInclude x:Key="de_DE" Source="/Resources/Locales/de_DE.axaml" />
+            <ResourceInclude x:Key="fr_FR" Source="/Resources/Locales/fr_FR.axaml" />
+            <ResourceInclude x:Key="es_ES" Source="/Resources/Locales/es_ES.axaml" />
+            <ResourceInclude x:Key="it_IT" Source="/Resources/Locales/it_IT.axaml" />
+            <ResourceInclude x:Key="pt_BR" Source="/Resources/Locales/pt_BR.axaml" />
+            <ResourceInclude x:Key="ru_RU" Source="/Resources/Locales/ru_RU.axaml" />
+            <ResourceInclude x:Key="uk_UA" Source="/Resources/Locales/uk_UA.axaml" />
+            <ResourceInclude x:Key="id_ID" Source="/Resources/Locales/id_ID.axaml" />
+            <ResourceInclude x:Key="fil_PH" Source="/Resources/Locales/fil_PH.axaml" />
+            <ResourceInclude x:Key="ta_IN" Source="/Resources/Locales/ta_IN.axaml" />
+            <ResourceInclude x:Key="ko_KR" Source="/Resources/Locales/ko_KR.axaml" />
+            <ResourceInclude x:Key="la_VA" Source="/Resources/Locales/la_VA.axaml" />
+            <ResourceInclude x:Key="sa_IN" Source="/Resources/Locales/sa_IN.axaml" />
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- 全ウィンドウ共通フォント：CJK フォールバック付き -->
+        <Style Selector="Window">
+            <Setter Property="FontFamily" Value="Yu Gothic UI, Segoe UI, Microsoft YaHei, Malgun Gothic, Noto Sans CJK, sans-serif" />
+        </Style>
+
+        <!-- ボタン：Tahoe の大きな角丸 -->
+        <Style Selector="Button">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <!-- ComboBox / TextBox：Tahoe 風の角丸 -->
+        <Style Selector="ComboBox">
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+    </Application.Styles>
+</Application>
