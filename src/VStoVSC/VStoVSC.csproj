@@ -39,12 +39,12 @@
     <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="SuperLightLogger" Version="1.0.7" />
-    <PackageReference Include="Microsoft.Build" Version="18.6.3" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build" Version="18.7.1" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
     <!-- Velopack は VelopackUpdateDialog.Avalonia 経由の推移参照に一本化（Lhamiel パターン）。
          旧 dialog 1.0.3 は NuGet.Versioning を参照しており、Velopack 1.0.1 がそれを配布しないため
          「アップデート確認」が FileNotFoundException で失敗していた。1.0.4 で参照撤去済み。 -->
-    <PackageReference Include="VelopackUpdateDialog.Avalonia" Version="1.0.6" />
+    <PackageReference Include="VelopackUpdateDialog.Avalonia" Version="1.0.7" />
   </ItemGroup>
 
   <ItemGroup>
