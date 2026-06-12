@@ -194,7 +194,10 @@ foreach ($runtime in $Runtimes) {
         # Cache を bypass するためクエリ文字列でユニーク化
         $resp = Invoke-WebRequest -Uri "${url}?_=$([Guid]::NewGuid().ToString('N'))" `
             -Headers @{ 'Cache-Control' = 'no-cache' } -TimeoutSec 30
-        $remoteManifest = $resp.Content | ConvertFrom-Json | ConvertTo-Json -Depth 100 -Compress
+        # R2 は text 系でない Content-Type で返すことがあり、その場合 .Content は byte[] になる
+        $raw = $resp.Content
+        if ($raw -is [byte[]]) { $raw = [System.Text.Encoding]::UTF8.GetString($raw) }
+        $remoteManifest = $raw | ConvertFrom-Json | ConvertTo-Json -Depth 100 -Compress
         if ($localManifest -eq $remoteManifest) {
             Write-Host "  ✅ $url がローカル manifest と一致 (attempt $attempt)"
             $matched = $true
