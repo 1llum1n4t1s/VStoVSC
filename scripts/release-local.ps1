@@ -23,7 +23,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 # ---- 定数 (旧 CI 版 velopack-release.yml と揃える) ----
-$VpkVersion = '0.0.1369-g1d5c984'   # 旧 CI 版と同一バージョンに固定 (サプライチェーン対策)
+$VpkVersion = '1.2.0'               # Velopack (vpk) は常に最新安定版を使う (ゆろ君ルール)。リリース時に最新を確認して更新
 $WranglerVersion = '4.92.0'         # サプライチェーン対策でバージョン固定
 $Bucket = 'vs2vsc-updates'
 $BaseUrl = 'https://vs2vsc.nephilim.jp'
