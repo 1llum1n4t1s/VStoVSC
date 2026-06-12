@@ -1,0 +1,261 @@
+# release-local.ps1 — ローカル署名付き Velopack リリース (Lhamiel テンプレートから横展開)
+#
+# SimplySign (Certum クラウド署名) は Desktop 接続 + スマホトークンが必要で
+# GitHub Actions からは署名できないため、リリースは本スクリプトでローカル実行する。
+# 旧 CI リリース (.github/workflows/velopack-release.yml) はこのスクリプトに置換済み。
+#
+# 前提:
+#   - SimplySign Desktop が接続済み (証明書が CurrentUser\My に見えていること)
+#   - Directory.Build.props の <Version> がリリースしたいバージョンになっていること (/vava 済み)
+#   - C:\Users\IMT\dev\Secret\secrets.json に cloudflare.api_token があること
+#
+# 使い方:
+#   pwsh scripts/release-local.ps1                # フルリリース (build + sign + upload + cleanup)
+#   pwsh scripts/release-local.ps1 -SkipUpload    # ビルド + 署名のみ (アップロードしない動作確認用)
+
+[CmdletBinding()]
+param(
+    [switch]$SkipUpload,
+    [string[]]$Runtimes = @('win-x64')
+)
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+# ---- 定数 (旧 CI 版 velopack-release.yml と揃える) ----
+$VpkVersion = '0.0.1369-g1d5c984'   # 旧 CI 版と同一バージョンに固定 (サプライチェーン対策)
+$WranglerVersion = '4.92.0'         # サプライチェーン対策でバージョン固定
+$Bucket = 'vs2vsc-updates'
+$BaseUrl = 'https://vs2vsc.nephilim.jp'
+$AccountId = '10901bfadbf1005164774a7350082985'
+$SecretsPath = 'C:\Users\IMT\dev\Secret\secrets.json'
+$CertSubjectName = 'Open Source Developer Yuichiro Shinozaki'
+# /n (Subject 名) で選択: 証明書の年次更新で thumbprint が変わっても動く
+$SignParams = "/n `"$CertSubjectName`" /fd SHA256 /td SHA256 /tr http://time.certum.pl"
+
+# VStoVSC は win-x64 のみ配信 (ARM64 配信なし)
+$RuntimeMatrix = @{
+    'win-x64' = @{ Channel = 'win' }
+}
+
+$RepoRoot = Split-Path -Parent $PSScriptRoot
+Set-Location $RepoRoot
+$WorkDir = Join-Path $RepoRoot 'local-release'
+$ArtifactsDir = Join-Path $WorkDir 'artifacts'
+
+function Invoke-Native {
+    param([string]$Description, [scriptblock]$Block)
+    & $Block
+    if ($LASTEXITCODE -ne 0) { throw "$Description が失敗しました (exit $LASTEXITCODE)" }
+}
+
+# ---- 0. プリフライト ----
+Write-Host '== プリフライト ==' -ForegroundColor Cyan
+
+# Git Bash (MSYS) 経由で起動すると括弧入り環境変数が落ちて vswhere.exe 解決等が
+# 壊れることがあるため補完する (非 AOT でも実害なしの保険)
+if (-not ${env:ProgramFiles(x86)}) { ${env:ProgramFiles(x86)} = 'C:\Program Files (x86)' }
+
+# VS Installer ディレクトリを PATH に追加 (vswhere.exe 解決用、非 AOT でも実害なしの保険)
+$vsInstallerDir = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer'
+if ($env:PATH -notlike "*$vsInstallerDir*") { $env:PATH = "$env:PATH;$vsInstallerDir" }
+
+# vpk (dotnet tool) は .NET 9 ランタイム要求だがローカルは 10 のみ → ロールフォワード
+$env:DOTNET_ROLL_FORWARD = 'Major'
+
+$version = ([xml](Get-Content 'Directory.Build.props' -Raw)).Project.PropertyGroup.Version |
+    Where-Object { $_ } | Select-Object -First 1
+if (-not $version) { throw 'Directory.Build.props から <Version> を取得できませんでした' }
+Write-Host "バージョン: $version"
+
+# SimplySign 接続確認 (証明書が見えなければ署名できないので最初に落とす)
+$cert = Get-ChildItem Cert:\CurrentUser\My |
+    Where-Object { $_.Subject -like "CN=$CertSubjectName*" -and $_.NotAfter -gt (Get-Date) }
+if (-not $cert) {
+    throw "署名証明書 (CN=$CertSubjectName) が見つかりません。SimplySign Desktop を起動してトークンでログインしてください。"
+}
+Write-Host "署名証明書: $($cert.Subject) (期限 $($cert.NotAfter.ToString('yyyy-MM-dd')))"
+
+# vpk を固定バージョンで用意
+$vpkInstalled = (dotnet tool list --global | Select-String -SimpleMatch 'vpk') -match [regex]::Escape($VpkVersion)
+if (-not $vpkInstalled) {
+    Write-Host "vpk $VpkVersion をインストールします..."
+    dotnet tool uninstall --global vpk 2>$null | Out-Null
+    Invoke-Native 'vpk のインストール' { dotnet tool install --global vpk --version $VpkVersion }
+}
+
+# Cloudflare トークン (アップロード時のみ必要)
+if (-not $SkipUpload) {
+    $secrets = Get-Content $SecretsPath -Raw | ConvertFrom-Json
+    if (-not $secrets.cloudflare.api_token) { throw "secrets.json に cloudflare.api_token が見つかりません" }
+    $env:CLOUDFLARE_API_TOKEN = $secrets.cloudflare.api_token
+    $env:CLOUDFLARE_ACCOUNT_ID = $AccountId
+}
+
+if (Test-Path $WorkDir) { Remove-Item $WorkDir -Recurse -Force }
+New-Item -ItemType Directory -Path $ArtifactsDir -Force | Out-Null
+
+# ---- 1. ビルド + 署名付きパッケージング (RID ごと) ----
+foreach ($runtime in $Runtimes) {
+    $config = $RuntimeMatrix[$runtime]
+    if (-not $config) { throw "未知の runtime: $runtime" }
+    $publishDir = Join-Path $WorkDir "publish-$runtime"
+
+    # restore と publish のパラメータを完全に一致させる (旧 CI の Codex P1 指摘 #3312152665 踏襲)。
+    # csproj は <SelfContained>false</SelfContained> なので、publish 時のみ
+    # --self-contained true で上書きするが、restore 時にも -p:SelfContained=true を
+    # 渡しておかないと runtime packs が assets.json に入らず、--no-restore で
+    # NETSDK1112 ("publish parameters are different than what's in the project file") が出る。
+    Write-Host "== restore: $runtime ==" -ForegroundColor Cyan
+    Invoke-Native "dotnet restore ($runtime)" {
+        dotnet restore src/VStoVSC/VStoVSC.csproj -r $runtime --force-evaluate -p:SelfContained=true
+    }
+
+    # MSBuild.Locator はユーザー側 Visual Studio の MSBuild を動的解決するため
+    # SelfContained でも問題なく動く (アプリ本体は self-contained / MSBuild は外部)
+    Write-Host "== publish: $runtime ==" -ForegroundColor Cyan
+    Invoke-Native "dotnet publish ($runtime)" {
+        dotnet publish src/VStoVSC/VStoVSC.csproj -c Release -r $runtime `
+            --self-contained true --no-restore -o $publishDir
+    }
+
+    if (-not (Test-Path (Join-Path $publishDir 'VStoVSC.exe'))) {
+        throw "VStoVSC.exe が publish 出力にありません ($runtime)"
+    }
+
+    Write-Host "== vpk pack + 署名: $runtime ==" -ForegroundColor Cyan
+    Invoke-Native "vpk pack ($runtime)" {
+        vpk pack `
+            --packId VStoVSC `
+            --packVersion $version `
+            --packTitle 'VStoVSC' `
+            --packAuthors 'ゆろち' `
+            --mainExe VStoVSC.exe `
+            --icon (Join-Path 'src' 'VStoVSC' 'icon' 'app.ico') `
+            --packDir $publishDir `
+            --outputDir $ArtifactsDir `
+            --channel $config.Channel `
+            --shortcuts 'StartMenu,Desktop' `
+            --signParams $SignParams
+    }
+}
+
+# 署名検証 (Setup.exe が正しく署名されているかリリース前に確認)
+Write-Host '== 署名検証 ==' -ForegroundColor Cyan
+foreach ($exe in Get-ChildItem $ArtifactsDir -Filter '*.exe') {
+    $sig = Get-AuthenticodeSignature $exe.FullName
+    if ($sig.Status -ne 'Valid' -or $sig.SignerCertificate.Subject -notlike "CN=$CertSubjectName*") {
+        throw "署名検証失敗: $($exe.Name) → $($sig.Status)"
+    }
+    Write-Host "  ✅ $($exe.Name): Valid ($($sig.SignerCertificate.Subject -replace ',.*$'))"
+}
+
+if ($SkipUpload) {
+    Write-Host "`n✅ -SkipUpload 指定のためここで終了。成果物: $ArtifactsDir" -ForegroundColor Green
+    Get-ChildItem $ArtifactsDir | Format-Table Name, @{n='Size(MB)'; e={[math]::Round($_.Length/1MB,1)}}
+    return
+}
+
+# ---- 2. R2 アップロード ----
+# - releases.{channel}.json (manifest) は同 channel の旧版を上書き
+# - *.nupkg は put のみ (過去版は cleanup ステップが manifest 基準で削除)
+Write-Host '== R2 アップロード ==' -ForegroundColor Cyan
+$uploaded = 0
+foreach ($f in Get-ChildItem $ArtifactsDir -File) {
+    Write-Host "  ↑ $($f.Name)"
+    Invoke-Native "R2 put ($($f.Name))" {
+        pnpm dlx "wrangler@$WranglerVersion" r2 object put "$Bucket/$($f.Name)" --file $f.FullName --remote
+    }
+    $uploaded++
+}
+Write-Host "✅ R2 アップロード完了: $uploaded ファイル"
+
+# ---- 3. 配信確認 (manifest 完全一致リトライ方式) ----
+# 旧 CI の Codex #3312267284 対応を踏襲: 単純な HTTP 200 だけだと CDN/edge が古い
+# manifest を返している間に cleanup が走り、旧 manifest を取得したクライアントが
+# 直後に消える .nupkg を取りに行って 404 失敗する race condition がある。
+# ローカルアップロード済の manifest と完全一致するまでリトライしてから次へ進む。
+Write-Host '== 配信確認 (manifest 伝播待機) ==' -ForegroundColor Cyan
+foreach ($runtime in $Runtimes) {
+    $channel = $RuntimeMatrix[$runtime].Channel
+    $url = "$BaseUrl/releases.$channel.json"
+    $localManifest = Get-Content (Join-Path $ArtifactsDir "releases.$channel.json") -Raw |
+        ConvertFrom-Json | ConvertTo-Json -Depth 100 -Compress
+
+    # 最大 90 秒 (18 回 × 5 秒) 待つ。R2 + Cloudflare の伝播は通常 ~10 秒だが余裕を持たせる。
+    $maxAttempts = 18
+    $matched = $false
+    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+        # Cache を bypass するためクエリ文字列でユニーク化
+        $resp = Invoke-WebRequest -Uri "${url}?_=$([Guid]::NewGuid().ToString('N'))" `
+            -Headers @{ 'Cache-Control' = 'no-cache' } -TimeoutSec 30
+        $remoteManifest = $resp.Content | ConvertFrom-Json | ConvertTo-Json -Depth 100 -Compress
+        if ($localManifest -eq $remoteManifest) {
+            Write-Host "  ✅ $url がローカル manifest と一致 (attempt $attempt)"
+            $matched = $true
+            break
+        }
+        Write-Host "  ⚠️ remote manifest がまだ古い (attempt $attempt / $maxAttempts)、5 秒待機..."
+        Start-Sleep -Seconds 5
+    }
+    if (-not $matched) {
+        throw "remote manifest が $($maxAttempts * 5) 秒以内にローカルと一致しませんでした。race 回避のため cleanup を中止します: $url"
+    }
+}
+
+# ---- 4. 旧バージョン nupkg のクリーンアップ (Aggressive 戦略) ----
+# ローカル artifacts の manifest (= 今アップロードしたものと同一) から keep set を作り、
+# R2 上の「.nupkg かつ manifest 外」だけを削除する。固定ファイル名 (Setup.exe /
+# Portable.zip / RELEASES* / assets.*.json / releases.*.json) は対象外なので安全。
+Write-Host '== 旧 nupkg クリーンアップ ==' -ForegroundColor Cyan
+$keep = @{}
+$manifests = Get-ChildItem $ArtifactsDir -Filter 'releases.*.json'
+if (-not $manifests) { throw 'artifacts に releases.*.json が見つかりません' }
+foreach ($m in $manifests) {
+    foreach ($asset in (Get-Content $m.FullName -Raw | ConvertFrom-Json).Assets) {
+        if ($asset.FileName) { $keep[$asset.FileName] = $true }
+    }
+}
+Write-Host "  保持対象 nupkg: $($keep.Count) 件"
+
+$api = "https://api.cloudflare.com/client/v4/accounts/$AccountId/r2/buckets/$Bucket"
+$headers = @{ Authorization = "Bearer $($env:CLOUDFLARE_API_TOKEN)" }
+
+$allKeys = [System.Collections.Generic.List[string]]::new()
+$cursor = ''
+while ($true) {
+    $uri = "$api/objects?per_page=1000" + $(if ($cursor) { "&cursor=$cursor" })
+    $resp = Invoke-RestMethod -Uri $uri -Headers $headers -TimeoutSec 30
+    foreach ($obj in $resp.result) { $allKeys.Add($obj.key) }
+    # 全件 1 ページに収まると result_info が省略される (StrictMode 下では直接参照が throw)
+    $info = $resp.PSObject.Properties['result_info']
+    if (-not $info -or -not $info.Value) { break }
+    $truncated = $info.Value.PSObject.Properties['is_truncated']
+    if (-not $truncated -or -not $truncated.Value) { break }
+    $cursorProp = $info.Value.PSObject.Properties['cursor']
+    $cursor = if ($cursorProp) { $cursorProp.Value } else { '' }
+    if (-not $cursor) { break }
+}
+
+$toDelete = $allKeys | Where-Object { $_ -like '*.nupkg' -and -not $keep.ContainsKey($_) }
+if (-not $toDelete) {
+    Write-Host '  ✅ 削除対象なし'
+} else {
+    $deleted = 0; $failed = 0
+    foreach ($key in $toDelete) {
+        $encoded = [uri]::EscapeDataString($key)
+        try {
+            Invoke-RestMethod -Method Delete -Uri "$api/objects/$encoded" -Headers $headers -TimeoutSec 30 | Out-Null
+            Write-Host "  🗑️  $key"
+            $deleted++
+        } catch {
+            Write-Warning "  削除失敗: $key — $($_.Exception.Message)"
+            $failed++
+        }
+    }
+    Write-Host "  🧹 クリーンアップ: $deleted 削除 / $failed 失敗"
+    # 全件失敗は token 権限等の異常なので fail (一部失敗は次回リリースで再試行される)
+    if ($failed -gt 0 -and $deleted -eq 0) { throw '旧 nupkg の削除がすべて失敗しました。API token の権限を確認してください。' }
+}
+
+Write-Host "`n🎉 リリース完了: v$version → $BaseUrl" -ForegroundColor Green

@@ -3,6 +3,7 @@ bin/
 obj/
 publish/
 artifacts/
+local-release/
 
 # Visual Studio 作業ディレクトリ
 .vs/
