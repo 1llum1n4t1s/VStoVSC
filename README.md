@@ -19,7 +19,7 @@ Visual Studio のソリューションファイル（`.sln` / `.slnx`）を **VS
 
 ## 💿 インストール
 
-[**VStoVSC-win-Setup.exe をダウンロード**](https://vs2vsc.nephilim.jp/VStoVSC-win-Setup.exe)
+[**VStoVSC-win-Setup.exe をダウンロード**](https://vs2vsc.kagayoi.com/VStoVSC-win-Setup.exe)
 
 ダウンロードしたインストーラを実行するだけです。スタートメニューとデスクトップにショートカットが作成されます。
 .NET ランタイムは同梱されているので、別途インストール不要です。
@@ -56,7 +56,7 @@ Visual Studio のソリューションファイル（`.sln` / `.slnx`）を **VS
 ## 🩺 トラブルシュート
 
 ### インストーラが SmartScreen に止められる
-インストーラにはコード署名を付与していますが、Windows SmartScreen の評価状況によっては警告が出る場合があります。ダウンロード元が `vs2vsc.nephilim.jp`、発行元が `Open Source Developer Yuichiro Shinozaki` であることを確認してから実行してください。
+インストーラにはコード署名を付与していますが、Windows SmartScreen の評価状況によっては警告が出る場合があります。ダウンロード元が `vs2vsc.kagayoi.com`、発行元が `Open Source Developer Yuichiro Shinozaki` であることを確認してから実行してください。
 
 ### 自動更新が走らない
 通信状況やインターネット接続不可の環境では更新確認に失敗することがあります。手動で最新版を取り直したい場合は、上記の Setup.exe を再ダウンロードしてインストールしてください。

@@ -5,7 +5,7 @@ namespace VStoVSC.Util;
 
 /// <summary>
 /// アプリケーションの更新チェック・ダウンロードを行う共通クラス。
-/// Velopack の SimpleWebSource ベースで Cloudflare R2 (vs2vsc.nephilim.jp) から取得する。
+/// Velopack の SimpleWebSource ベースで Cloudflare R2 (vs2vsc.kagayoi.com) から取得する。
 /// </summary>
 public static class UpdateChecker
 {

@@ -24,7 +24,7 @@ public sealed class Settings
     /// 自動更新で許可する R2 配信元の正規 URL（悪意ある誘導を防ぐためハードコード固定）。
     /// Velopack の <see cref="Velopack.Sources.SimpleWebSource"/> がこの base URL + <c>/releases.{channel}.json</c> を取得する。
     /// </summary>
-    internal const string CanonicalUpdateBaseUrl = "https://vs2vsc.nephilim.jp";
+    internal const string CanonicalUpdateBaseUrl = "https://vs2vsc.kagayoi.com";
 
     /// <summary>テーマ ("System" / "Light" / "Dark")</summary>
     public string Theme { get; set; } = "System";
