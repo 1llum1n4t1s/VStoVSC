@@ -8,8 +8,6 @@
     <Platforms>x64</Platforms>
     <Version>2.0.13</Version>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <!-- Avalonia の transitive 依存 Tmds.DBus.Protocol の脆弱性警告は Linux 用 D-Bus library で win-x64 では未使用のため抑制 -->
-    <NoWarn>$(NoWarn);NU1903</NoWarn>
     <AssemblyTitle>VStoVSC</AssemblyTitle>
     <AssemblyDescription>Visual Studio ソリューション (.sln / .slnx) を VS Code 用に変換するツール</AssemblyDescription>
     <AssemblyCompany>1llum1n4t1s</AssemblyCompany>
