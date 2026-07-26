@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Velopack;
 using VStoVSC.Util;
@@ -8,11 +9,18 @@ namespace VStoVSC;
 /// <summary>
 /// アプリケーションのエントリポイント
 /// </summary>
-internal static class Program
+internal static partial class Program
 {
+    private const string AppUserModelId = "velopack.VStoVSC";
+
     [STAThread]
     public static void Main(string[] args)
     {
+        if (OperatingSystem.IsWindows())
+        {
+            TrySetCurrentProcessAppUserModelId();
+        }
+
         // Velopack のブートストラップを最初に走らせる
         // (--veloapp-install / --veloapp-updated 等の internal hook を捌くため、Avalonia 起動前に必須)
         var velopackApp = VelopackApp.Build();
@@ -43,4 +51,13 @@ internal static class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
+
+    private static void TrySetCurrentProcessAppUserModelId()
+    {
+        try { _ = SetCurrentProcessExplicitAppUserModelID(AppUserModelId); }
+        catch { /* シェル連携の失敗だけで起動を止めない */ }
+    }
+
+    [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int SetCurrentProcessExplicitAppUserModelID(string appId);
 }
