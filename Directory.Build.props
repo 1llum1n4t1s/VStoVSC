@@ -10,10 +10,14 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyTitle>VStoVSC</AssemblyTitle>
     <AssemblyDescription>Visual Studio ソリューション (.sln / .slnx) を VS Code 用に変換するツール</AssemblyDescription>
-    <AssemblyCompany>1llum1n4t1s</AssemblyCompany>
+    <Company>Kagayoi</Company>
     <AssemblyProduct>VStoVSC</AssemblyProduct>
-    <AssemblyCopyright>Copyright © 2026 ゆろち</AssemblyCopyright>
+    <Copyright>Copyright © 2026 Kagayoi</Copyright>
     <Title>VStoVSC</Title>
-    <Authors>ゆろち</Authors>
+    <Authors>Kagayoi</Authors>
+    <!-- NuGet 依存のサプライチェーン保護: lockfile (packages.lock.json) を生成・検証する。 -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- IDE コードスタイル分析をビルド時にも強制する。IDE0005 はドキュメント生成が必須なため対象外。 -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 </Project>

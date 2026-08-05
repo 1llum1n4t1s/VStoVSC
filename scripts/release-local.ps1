@@ -134,7 +134,7 @@ foreach ($runtime in $Runtimes) {
             --packId VStoVSC `
             --packVersion $version `
             --packTitle 'VStoVSC' `
-            --packAuthors 'ゆろち' `
+            --packAuthors 'Kagayoi' `
             --mainExe VStoVSC.exe `
             --icon (Join-Path 'src' 'VStoVSC' 'icon' 'app.ico') `
             --packDir $publishDir `
