@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Інформація</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Попередження</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Завершено</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">Знайдено наявну папку .vscode.&#10;&#10;Так: видалити папку та створити все заново.&#10;Ні: зберегти папку й оновити лише tasks.json (наявний launch.json не змінюється).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Перетворення завершено</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} успішно перетворено</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Помилка перетворення</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Виберіть файл .sln або .slnx</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Файл не знайдено: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Сталася помилка: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">Файл MSBuild.exe не знайдено, тому файли налаштувань VS Code не створено. Установіть Visual Studio або MSBuild Build Tools і повторіть спробу.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Завершено з попередженнями</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">Файл launch.json не створено, оскільки не знайдено виконуваного проєкту (OutputType Exe / WinExe).</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">Файл launch.json не створено, оскільки не вдалося створити жодної конфігурації налагодження.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">Не вдалося створити launch.json: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Не вдалося створити конфігурацію налагодження для {0} проєкт(ів), тому їх немає в launch.json.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Виберіть файл рішення Visual Studio</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Файли рішення</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Усі файли</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">Про програму</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Версія</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Перевірити оновлення</x:String>

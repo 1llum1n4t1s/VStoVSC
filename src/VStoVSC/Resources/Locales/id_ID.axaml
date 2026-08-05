@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Informasi</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Peringatan</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Selesai</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">Folder .vscode yang sudah ada ditemukan.&#10;&#10;Ya: hapus folder dan buat ulang semuanya.&#10;Tidak: pertahankan folder dan perbarui hanya tasks.json (launch.json yang ada tidak diubah).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Konversi Selesai</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Berhasil mengonversi {0}</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Kesalahan Konversi</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Pilih file .sln atau .slnx</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">File tidak ditemukan: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Terjadi kesalahan: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe tidak ditemukan, sehingga berkas konfigurasi VS Code tidak dibuat. Pasang Visual Studio atau MSBuild Build Tools lalu coba lagi.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Selesai dengan peringatan</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">launch.json tidak dibuat karena tidak ada proyek yang dapat dieksekusi (OutputType Exe / WinExe).</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">launch.json tidak dibuat karena tidak ada konfigurasi debug yang dapat dibuat.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">Gagal membuat launch.json: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Konfigurasi debug tidak dapat dibuat untuk {0} proyek, sehingga tidak ada di launch.json.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Pilih berkas solusi Visual Studio</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Berkas solusi</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Semua berkas</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">Tentang</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Versi</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Periksa pembaruan</x:String>

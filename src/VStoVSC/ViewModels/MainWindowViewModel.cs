@@ -15,6 +15,9 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
     private readonly VSCodeGenerator _generator;
     private bool _disposed;
 
+    /// <summary>変換処理の実行中フラグ (0=待機 / 1=実行中)。再入防止に使う</summary>
+    private int _isConverting;
+
     [ObservableProperty]
     private bool _isDragOver;
 
@@ -101,22 +104,42 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
     /// </summary>
     private async Task StartConversionAsync(string solutionPath)
     {
+        // D&D とクリックの同時操作や連打で複数の変換が並走すると、.vscode の削除と書き込みが交差するため直列化する
+        if (Interlocked.CompareExchange(ref _isConverting, 1, 0) != 0)
+        {
+            Logger.Log("変換処理が実行中のため、追加の要求を無視しました。", LogLevel.Warning);
+            return;
+        }
+
         try
         {
             if (!await ValidateSolutionPathAsync(solutionPath))
                 return;
 
-            await _generator.GenerateVSCodeFilesAsync(solutionPath,
+            var result = await _generator.GenerateVSCodeFilesAsync(solutionPath,
                 message => MessageService.ShowYesNoQuestionAsync(message, App.Text("Dialog.Confirm")));
 
             var successMessage = App.Text("Result.Success.Message", Path.GetFileName(solutionPath));
-            await MessageService.ShowSuccess(successMessage, App.Text("Result.Success.Title"));
+            if (result.IsFullSuccess)
+            {
+                await MessageService.ShowSuccess(successMessage, App.Text("Result.Success.Title"));
+            }
+            else
+            {
+                // 部分成功（launch.json 未生成など）を成功として見せない
+                var warningMessage = $"{successMessage}\n\n{string.Join("\n", result.Warnings)}";
+                await MessageService.ShowWarning(warningMessage, App.Text("Result.Warning.Title"));
+            }
         }
         catch (Exception ex)
         {
             Logger.LogException("変換処理中にエラー", ex);
             await MessageService.ShowException(App.Text("Result.Error.Generic", ex.Message), ex,
                 App.Text("Result.Error.Title"));
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _isConverting, 0);
         }
     }
 

@@ -130,11 +130,24 @@ public partial class App : Application
         if (string.Equals(_activeLocaleKey, localeKey, StringComparison.OrdinalIgnoreCase)) return;
 
         // CodeRabbit #3312176135 対応: ResourceDictionary のインデクサは KeyNotFoundException を投げるため
-        // TryGetResource を使って未登録キーでも例外を出さずに警告ログだけで早期 return する。
+        // TryGetResource を使って未登録キーでも例外を出さずに扱う。
+        // ロケールは MergedDictionaries に1つも入らないと Text.* が解決できずキー文字列が UI に出るため、
+        // 未登録キーのときは黙って return せず既定ロケールへフォールバックする。
         if (!Resources.TryGetResource(localeKey, null, out var resource) || resource is not IResourceProvider targetLocale)
         {
             Logger.Log($"未登録のロケールが指定されました: {localeKey}", LogLevel.Warning);
-            return;
+
+            var fallbackKey = DetectDefaultLocale();
+            if (string.Equals(fallbackKey, localeKey, StringComparison.OrdinalIgnoreCase)
+                || !Resources.TryGetResource(fallbackKey, null, out var fallbackResource)
+                || fallbackResource is not IResourceProvider fallbackLocale)
+            {
+                return;
+            }
+
+            Logger.Log($"既定ロケールへフォールバックします: {fallbackKey}", LogLevel.Warning);
+            targetLocale = fallbackLocale;
+            localeKey = fallbackKey;
         }
 
         if (_activeLocale != null)

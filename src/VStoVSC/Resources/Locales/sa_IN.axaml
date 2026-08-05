@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">सूचना</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">चेतावनी</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">समाप्तम्</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">विद्यमाना .vscode संचिकाधानी प्राप्ता।&#10;&#10;आम्: संचिकाधानीं लुम्पतु, सर्वं पुनः रचयतु।&#10;न: संचिकाधानीं रक्षतु, केवलं tasks.json नवीकरोतु (विद्यमानं launch.json न परिवर्त्यते)।</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">परिवर्तनं समाप्तम्</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} सफलतया परिवर्तितम्</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">परिवर्तनदोषः</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln अथवा .slnx सञ्चिकां चिनोतु</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">सञ्चिका न प्राप्ता: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">दोषः अभवत्: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe न प्राप्तम्, अतः VS Code विन्याससंचिकाः न रचिताः। Visual Studio अथवा MSBuild Build Tools संस्थाप्य पुनः प्रयततु।</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">सावधानवचनैः सह समाप्तम्</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">निष्पादनयोग्यः प्रकल्पः (OutputType Exe / WinExe) न प्राप्तः, अतः launch.json न रचितम्।</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">शोधनविन्यासः रचयितुं न शक्तः, अतः launch.json न रचितम्।</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">launch.json रचने विफलता: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">{0} प्रकल्पानां कृते शोधनविन्यासः रचयितुं न शक्तः, अतः ते launch.json मध्ये न सन्ति।</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Visual Studio समाधानसंचिकां चिनोतु</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">समाधानसंचिकाः</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">सर्वाः संचिकाः</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">विषये</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">संस्करणम्</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">अद्यतनं परीक्षयतु</x:String>

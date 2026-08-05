@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Information</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Avertissement</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Terminé</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">Un dossier .vscode existant a été trouvé.&#10;&#10;Oui : supprimer le dossier et tout régénérer.&#10;Non : conserver le dossier et mettre à jour uniquement tasks.json (un launch.json existant reste inchangé).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Conversion terminée</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} converti avec succès</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Erreur de conversion</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Veuillez sélectionner un fichier .sln ou .slnx</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Fichier introuvable : {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Une erreur s'est produite : {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe est introuvable, les fichiers de configuration VS Code n'ont donc pas été générés. Installez Visual Studio ou les MSBuild Build Tools, puis réessayez.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Terminé avec des avertissements</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">launch.json n'a pas été généré car aucun projet exécutable (OutputType Exe / WinExe) n'a été trouvé.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">launch.json n'a pas été généré car aucune configuration de débogage n'a pu être créée.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">Échec de la génération de launch.json : {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Aucune configuration de débogage n'a pu être créée pour {0} projet(s) ; ils sont donc absents de launch.json.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Sélectionnez un fichier solution Visual Studio</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Fichiers solution</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Tous les fichiers</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">À propos</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Version</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Vérifier les mises à jour</x:String>

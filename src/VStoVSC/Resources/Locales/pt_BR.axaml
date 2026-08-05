@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Informação</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Aviso</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Concluído</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">Foi encontrada uma pasta .vscode existente.&#10;&#10;Sim: excluir a pasta e gerar tudo novamente.&#10;Não: manter a pasta e atualizar apenas o tasks.json (um launch.json existente não é alterado).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Conversão concluída</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} convertido com sucesso</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Erro de conversão</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Selecione um arquivo .sln ou .slnx</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Arquivo não encontrado: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Ocorreu um erro: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">O MSBuild.exe não foi encontrado, portanto os arquivos de configuração do VS Code não foram gerados. Instale o Visual Studio ou o MSBuild Build Tools e tente novamente.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Concluído com avisos</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">O launch.json não foi gerado porque nenhum projeto executável (OutputType Exe / WinExe) foi encontrado.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">O launch.json não foi gerado porque nenhuma configuração de depuração pôde ser criada.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">Falha ao gerar o launch.json: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Não foi possível criar a configuração de depuração para {0} projeto(s), portanto eles não estão no launch.json.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Selecione um arquivo de solução do Visual Studio</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Arquivos de solução</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Todos os arquivos</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">Sobre</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Versão</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Verificar atualizações</x:String>

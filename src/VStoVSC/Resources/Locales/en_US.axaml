@@ -20,6 +20,9 @@
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Warning</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Completed</x:String>
 
+  <!-- Confirmation -->
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">An existing .vscode folder was found.&#10;&#10;Yes: delete the folder and regenerate everything.&#10;No: keep the folder and update tasks.json only (an existing launch.json is left untouched).</x:String>
+
   <!-- Conversion Result -->
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Conversion Complete</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Successfully converted {0}</x:String>
@@ -27,6 +30,17 @@
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Please select a .sln or .slnx file</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">File not found: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">An error occurred: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe was not found, so the VS Code settings were not generated. Install Visual Studio or the MSBuild Build Tools and try again.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Completed with warnings</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">launch.json was not generated because no executable project (OutputType Exe / WinExe) was found.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">launch.json was not generated because no debug configuration could be created.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">Failed to generate launch.json: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">No debug configuration could be created for {0} project(s), so they are missing from launch.json.</x:String>
+
+  <!-- File Picker -->
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Select a Visual Studio solution file</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Solution files</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">All files</x:String>
 
   <!-- Version -->
   <x:String x:Key="Text.Version.Header" xml:space="preserve">About</x:String>

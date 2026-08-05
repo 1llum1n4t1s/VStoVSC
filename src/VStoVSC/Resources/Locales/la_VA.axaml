@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Informatio</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Monitio</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Completum</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">Plica .vscode iam exsistens inventa est.&#10;&#10;Ita: plicam dele et omnia denuo genera.&#10;Non: plicam serva et tantum tasks.json renova (launch.json exsistens non mutatur).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Conversio Completa</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} feliciter conversum est</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Error Conversionis</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Elige fasciculum .sln vel .slnx</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Fasciculus non inventus: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Error occurrit: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe non inventum est, itaque tabellae configurationis VS Code non generatae sunt. Visual Studio vel MSBuild Build Tools instrue et iterum conare.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Completum cum monitis</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">launch.json non generatum est, quia nullum inceptum exsecutabile (OutputType Exe / WinExe) inventum est.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">launch.json non generatum est, quia nulla configuratio purgationis creari potuit.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">launch.json generari non potuit: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Pro {0} inceptis configuratio purgationis creari non potuit, ideo in launch.json desunt.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Elige tabellam solutionis Visual Studio</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Tabellae solutionis</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Omnes tabellae</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">De</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Versio</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Inspice renovationes</x:String>

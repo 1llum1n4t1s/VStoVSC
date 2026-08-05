@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Information</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Warnung</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Abgeschlossen</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">Ein vorhandener .vscode-Ordner wurde gefunden.&#10;&#10;Ja: Ordner löschen und alles neu erzeugen.&#10;Nein: Ordner behalten und nur tasks.json aktualisieren (eine vorhandene launch.json bleibt unverändert).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Konvertierung abgeschlossen</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} erfolgreich konvertiert</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Konvertierungsfehler</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Bitte wählen Sie eine .sln oder .slnx-Datei</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Datei nicht gefunden: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Ein Fehler ist aufgetreten: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe wurde nicht gefunden, daher wurden keine VS Code-Einstellungsdateien erzeugt. Installieren Sie Visual Studio oder die MSBuild Build Tools und versuchen Sie es erneut.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Mit Warnungen abgeschlossen</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">launch.json wurde nicht erzeugt, da kein ausführbares Projekt (OutputType Exe / WinExe) gefunden wurde.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">launch.json wurde nicht erzeugt, da keine Debugkonfiguration erstellt werden konnte.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">launch.json konnte nicht erzeugt werden: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Für {0} Projekt(e) konnte keine Debugkonfiguration erstellt werden; sie fehlen daher in launch.json.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Visual Studio-Projektmappendatei auswählen</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Projektmappendateien</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Alle Dateien</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">Über</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Version</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Auf Updates prüfen</x:String>

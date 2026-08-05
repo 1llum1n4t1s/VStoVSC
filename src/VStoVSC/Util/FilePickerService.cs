@@ -25,15 +25,15 @@ public sealed class FilePickerService : IFilePickerService
         var provider = _getStorageProvider();
         var options = new FilePickerOpenOptions
         {
-            Title = "Visual Studioソリューションファイルを選択してください",
+            Title = App.Text("FilePicker.Title"),
             AllowMultiple = false,
             FileTypeFilter =
             [
-                new FilePickerFileType("ソリューションファイル")
+                new FilePickerFileType(App.Text("FilePicker.SolutionFiles"))
                 {
                     Patterns = ["*.sln", "*.slnx"]
                 },
-                new FilePickerFileType("すべてのファイル") { Patterns = ["*.*"] }
+                new FilePickerFileType(App.Text("FilePicker.AllFiles")) { Patterns = ["*.*"] }
             ]
         };
 

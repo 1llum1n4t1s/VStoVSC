@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Информация</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Предупреждение</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Завершено</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">Обнаружена существующая папка .vscode.&#10;&#10;Да: удалить папку и создать всё заново.&#10;Нет: сохранить папку и обновить только tasks.json (существующий launch.json не изменяется).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Преобразование завершено</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} успешно преобразован</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Ошибка преобразования</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Выберите файл .sln или .slnx</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Файл не найден: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Произошла ошибка: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">Файл MSBuild.exe не найден, поэтому файлы настроек VS Code не созданы. Установите Visual Studio или MSBuild Build Tools и повторите попытку.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Завершено с предупреждениями</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">Файл launch.json не создан, так как не найден исполняемый проект (OutputType Exe / WinExe).</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">Файл launch.json не создан, так как не удалось создать ни одной конфигурации отладки.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">Не удалось создать launch.json: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Не удалось создать конфигурацию отладки для {0} проект(ов), поэтому они отсутствуют в launch.json.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Выберите файл решения Visual Studio</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Файлы решения</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Все файлы</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">О программе</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Версия</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Проверить обновления</x:String>

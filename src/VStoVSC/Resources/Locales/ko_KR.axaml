@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">정보</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">경고</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">완료</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">기존 .vscode 폴더가 있습니다.&#10;&#10;예: 폴더를 삭제하고 모두 다시 생성합니다.&#10;아니요: 폴더를 유지하고 tasks.json만 갱신합니다(기존 launch.json은 변경하지 않습니다).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">변환 완료</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} 변환을 성공적으로 완료했습니다</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">변환 오류</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln 또는 .slnx 파일을 선택하세요</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">파일을 찾을 수 없습니다: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">오류가 발생했습니다: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe를 찾을 수 없어 VS Code 설정 파일을 생성하지 않았습니다. Visual Studio 또는 MSBuild Build Tools를 설치한 후 다시 시도하세요.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">경고와 함께 완료</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">실행 가능한 프로젝트(OutputType이 Exe / WinExe)를 찾지 못해 launch.json을 생성하지 않았습니다.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">디버그 구성을 만들 수 없어 launch.json을 생성하지 않았습니다.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">launch.json 생성에 실패했습니다: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">{0}개 프로젝트의 디버그 구성을 만들지 못해 launch.json에 포함되지 않았습니다.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Visual Studio 솔루션 파일을 선택하세요</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">솔루션 파일</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">모든 파일</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">정보</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">버전</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">업데이트 확인</x:String>

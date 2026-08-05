@@ -20,12 +20,24 @@
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">警告</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">完了</x:String>
 
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">既存の .vscode フォルダが見つかりました。&#10;&#10;「はい」: フォルダを削除してすべて再生成します。&#10;「いいえ」: フォルダを保持し、tasks.json だけ更新します（既存の launch.json は変更しません）。</x:String>
+
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">変換完了</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} の変換が完了しました</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">変換エラー</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln または .slnx ファイルを選択してください</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">ファイルが見つかりません: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">エラーが発生しました: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe が見つからないため、VS Code 設定ファイルを生成しませんでした。Visual Studio または MSBuild Build Tools をインストールしてからやり直してください。</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">警告付きで完了</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">実行可能プロジェクト (OutputType が Exe / WinExe) が見つからないため、launch.json は生成しませんでした。</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">デバッグ構成を作成できなかったため、launch.json は生成しませんでした。</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">launch.json の生成に失敗しました: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">{0} 件のプロジェクトはデバッグ構成を作成できなかったため、launch.json に含まれていません。</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Visual Studio ソリューションファイルを選択してください</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">ソリューションファイル</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">すべてのファイル</x:String>
 
   <x:String x:Key="Text.Version.Header" xml:space="preserve">バージョン情報</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">バージョン</x:String>

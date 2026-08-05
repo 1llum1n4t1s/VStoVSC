@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Impormasyon</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Babala</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Tapos na</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">May nakitang umiiral na .vscode folder.&#10;&#10;Oo: burahin ang folder at buuin muli ang lahat.&#10;Hindi: panatilihin ang folder at i-update lang ang tasks.json (hindi babaguhin ang umiiral na launch.json).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Tapos ang Conversion</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Matagumpay na na-convert ang {0}</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Error sa Conversion</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Pumili ng .sln o .slnx file</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Hindi nahanap ang file: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">May nangyaring error: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">Hindi natagpuan ang MSBuild.exe, kaya hindi nabuo ang mga file ng setting ng VS Code. I-install ang Visual Studio o ang MSBuild Build Tools at subukan muli.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Tapos na na may babala</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">Hindi nabuo ang launch.json dahil walang natagpuang executable na proyekto (OutputType Exe / WinExe).</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">Hindi nabuo ang launch.json dahil walang nagawang debug configuration.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">Nabigong buuin ang launch.json: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Walang nagawang debug configuration para sa {0} proyekto, kaya wala sila sa launch.json.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Pumili ng Visual Studio solution file</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">Mga solution file</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Lahat ng file</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">Tungkol</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Bersyon</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Tingnan ang updates</x:String>

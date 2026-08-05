@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">தகவல்</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">எச்சரிக்கை</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">முடிந்தது</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">ஏற்கனவே உள்ள .vscode கோப்புறை கண்டறியப்பட்டது.&#10;&#10;ஆம்: கோப்புறையை நீக்கி அனைத்தையும் மீண்டும் உருவாக்கவும்.&#10;இல்லை: கோப்புறையை வைத்துக்கொண்டு tasks.json ஐ மட்டும் புதுப்பிக்கவும் (ஏற்கனவே உள்ள launch.json மாற்றப்படாது).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">மாற்றம் முடிந்தது</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} வெற்றிகரமாக மாற்றப்பட்டது</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">மாற்ற பிழை</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln அல்லது .slnx கோப்பைத் தேர்ந்தெடுக்கவும்</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">கோப்பு கிடைக்கவில்லை: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">பிழை ஏற்பட்டது: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe கிடைக்கவில்லை, எனவே VS Code அமைப்புக் கோப்புகள் உருவாக்கப்படவில்லை. Visual Studio அல்லது MSBuild Build Tools ஐ நிறுவிய பிறகு மீண்டும் முயற்சிக்கவும்.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">எச்சரிக்கைகளுடன் முடிந்தது</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">இயக்கக்கூடிய திட்டம் (OutputType Exe / WinExe) கிடைக்காததால் launch.json உருவாக்கப்படவில்லை.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">பிழைத்திருத்த அமைப்பு எதுவும் உருவாக்க முடியாததால் launch.json உருவாக்கப்படவில்லை.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">launch.json ஐ உருவாக்க முடியவில்லை: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">{0} திட்டங்களுக்கு பிழைத்திருத்த அமைப்பை உருவாக்க முடியவில்லை, எனவே அவை launch.json இல் இல்லை.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Visual Studio தீர்வு கோப்பைத் தேர்ந்தெடுக்கவும்</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">தீர்வு கோப்புகள்</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">அனைத்து கோப்புகளும்</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">பற்றி</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">பதிப்பு</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">புதுப்பிப்புகளைச் சரிபார்</x:String>

@@ -117,6 +117,13 @@ public sealed class Settings
         Theme = Array.Find(SupportedThemes, t => string.Equals(t, Theme, StringComparison.OrdinalIgnoreCase))
                 ?? "System";
 
+        // 未知のロケールを残すと ApplyLocale が適用できず UI にキー文字列が出るため、空（システム自動検出）へ戻す
+        Locale ??= "";
+        if (Locale.Length > 0 && !Array.Exists(App.SupportedLocales, l => string.Equals(l, Locale, StringComparison.OrdinalIgnoreCase)))
+        {
+            Locale = "";
+        }
+
         IgnoreUpdateTag ??= "";
         if (IgnoreUpdateTag.Length > 256 || IgnoreUpdateTag.AsSpan().IndexOfAnyInRange('\0', '\x1F') >= 0)
             IgnoreUpdateTag = "";

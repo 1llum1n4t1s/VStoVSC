@@ -27,7 +27,8 @@ public partial class MainWindow : Window
             ApplyAccentOverlay();
 
             var filePicker = new FilePickerService(() => StorageProvider);
-            var generator = new VSCodeGenerator(_ => { });
+            // Generator の診断ログ (MSBuild 検出失敗 / migrate 失敗 / launch 解析エラー) を捨てずにログファイルへ残す
+            var generator = new VSCodeGenerator(message => Logger.Log(message));
             DataContext = new MainWindowViewModel(filePicker, generator);
         }
         catch (Exception ex)

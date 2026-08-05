@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">Informazione</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">Avviso</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">Completato</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">È stata trovata una cartella .vscode esistente.&#10;&#10;Sì: elimina la cartella e rigenera tutto.&#10;No: mantieni la cartella e aggiorna solo tasks.json (un launch.json esistente resta invariato).</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">Conversione completata</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} convertito con successo</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Errore di conversione</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Selezionare un file .sln o .slnx</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">File non trovato: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Si è verificato un errore: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe non è stato trovato, quindi i file di configurazione di VS Code non sono stati generati. Installa Visual Studio o i MSBuild Build Tools e riprova.</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">Completato con avvisi</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">launch.json non è stato generato perché non è stato trovato alcun progetto eseguibile (OutputType Exe / WinExe).</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">launch.json non è stato generato perché non è stato possibile creare alcuna configurazione di debug.</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">Generazione di launch.json non riuscita: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">Non è stato possibile creare una configurazione di debug per {0} progetto/i, quindi non sono presenti in launch.json.</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">Seleziona un file soluzione di Visual Studio</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">File soluzione</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">Tutti i file</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">Informazioni</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">Versione</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">Cerca aggiornamenti</x:String>

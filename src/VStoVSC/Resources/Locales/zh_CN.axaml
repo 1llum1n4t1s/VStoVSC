@@ -17,12 +17,24 @@
   <x:String x:Key="Text.Dialog.Info" xml:space="preserve">信息</x:String>
   <x:String x:Key="Text.Dialog.Warning" xml:space="preserve">警告</x:String>
   <x:String x:Key="Text.Dialog.Completed" xml:space="preserve">完成</x:String>
+
+  <x:String x:Key="Text.Confirm.ExistingVSCode" xml:space="preserve">发现已存在的 .vscode 文件夹。&#10;&#10;是：删除该文件夹并重新生成全部文件。&#10;否：保留该文件夹，仅更新 tasks.json（不会修改已有的 launch.json）。</x:String>
   <x:String x:Key="Text.Result.Success.Title" xml:space="preserve">转换完成</x:String>
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">已成功转换 {0}</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">转换错误</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">请选择 .sln 或 .slnx 文件</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">文件未找到: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">发生错误: {0}</x:String>
+  <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">未找到 MSBuild.exe，因此未生成 VS Code 配置文件。请安装 Visual Studio 或 MSBuild 生成工具后重试。</x:String>
+  <x:String x:Key="Text.Result.Warning.Title" xml:space="preserve">已完成（有警告）</x:String>
+  <x:String x:Key="Text.Result.Warning.NoExecutableProject" xml:space="preserve">未找到可执行项目（OutputType 为 Exe / WinExe），因此未生成 launch.json。</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchFailed" xml:space="preserve">无法创建任何调试配置，因此未生成 launch.json。</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchError" xml:space="preserve">生成 launch.json 失败: {0}</x:String>
+  <x:String x:Key="Text.Result.Warning.LaunchPartial" xml:space="preserve">有 {0} 个项目无法创建调试配置，因此未包含在 launch.json 中。</x:String>
+
+  <x:String x:Key="Text.FilePicker.Title" xml:space="preserve">请选择 Visual Studio 解决方案文件</x:String>
+  <x:String x:Key="Text.FilePicker.SolutionFiles" xml:space="preserve">解决方案文件</x:String>
+  <x:String x:Key="Text.FilePicker.AllFiles" xml:space="preserve">所有文件</x:String>
   <x:String x:Key="Text.Version.Header" xml:space="preserve">关于</x:String>
   <x:String x:Key="Text.Version.Label" xml:space="preserve">版本</x:String>
   <x:String x:Key="Text.Version.CheckUpdate" xml:space="preserve">检查更新</x:String>

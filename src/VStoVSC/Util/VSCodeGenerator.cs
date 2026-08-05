@@ -1,4 +1,5 @@
 using Microsoft.Build.Construction;
+using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
 using System.Diagnostics;
 using System.IO;
@@ -41,6 +42,11 @@ public partial class VSCodeGenerator
     /// 最小対応Visual Studioバージョン
     /// </summary>
     private const int MinimumVisualStudioVersion = 10; // Visual Studio 2010以降
+
+    /// <summary>
+    /// dotnet sln migrate の待機タイムアウト (ミリ秒)
+    /// </summary>
+    private const int DotnetSlnMigrateTimeoutMs = 60_000;
 
     /// <summary>
     /// ログ出力用のコールバック
@@ -352,7 +358,8 @@ public partial class VSCodeGenerator
     /// <param name="vscodeDir">.vscodeディレクトリのパス</param>
     /// <param name="solutionPath">ソリューションファイルのパス</param>
     /// <param name="solutionName">ソリューション名</param>
-    public void GenerateLaunchJson(string vscodeDir, string solutionPath, string solutionName)
+    /// <param name="result">生成結果の記録先（省略可）</param>
+    public void GenerateLaunchJson(string vscodeDir, string solutionPath, string solutionName, VSCodeGenerationResult? result = null)
     {
         var solutionDir = Path.GetDirectoryName(solutionPath)!;
         try
@@ -361,6 +368,8 @@ public partial class VSCodeGenerator
             var executableProjects = projects.Where(p => IsExecutableProject(p.AbsolutePath)).ToList();
             if (executableProjects.Count == 0)
             {
+                LogMessage("実行可能プロジェクトが見つからないため launch.json は生成しません。");
+                result?.Warnings.Add(App.Text("Result.Warning.NoExecutableProject"));
                 return;
             }
 
@@ -377,7 +386,17 @@ public partial class VSCodeGenerator
             }
             if (configurations.Count == 0)
             {
+                LogMessage("launch.json の構成を1件も作成できませんでした。");
+                result?.Warnings.Add(App.Text("Result.Warning.LaunchFailed"));
                 return;
+            }
+
+            // 一部だけ構成を作れなかった場合を「完全成功」と誤認させない
+            if (configurations.Count < executableProjects.Count)
+            {
+                var skipped = executableProjects.Count - configurations.Count;
+                LogMessage($"launch 構成を作成できなかったプロジェクトが {skipped} 件あります。");
+                result?.Warnings.Add(App.Text("Result.Warning.LaunchPartial", skipped));
             }
 
             object launchRoot = configurations.Count >= 2
@@ -398,6 +417,11 @@ public partial class VSCodeGenerator
 
             var launchPath = Path.Combine(vscodeDir, LaunchJsonFileName);
             SaveJsonFile(launchPath, launchRoot);
+            if (result != null)
+            {
+                result.LaunchJsonWritten = true;
+                result.LaunchConfigurationCount = configurations.Count;
+            }
             LogMessage(configurations.Count >= 2
                 ? $"launch.json生成完了: {configurations.Count}個の構成 + マルチスタートアップ (すべて起動)"
                 : $"launch.json生成完了: {executableProjects[0].ProjectName}");
@@ -405,7 +429,103 @@ public partial class VSCodeGenerator
         catch (Exception ex)
         {
             LogMessage($"launch.json生成中にエラーが発生: {ex.Message}");
+            result?.Warnings.Add(App.Text("Result.Warning.LaunchError", ex.Message));
         }
+    }
+
+    /// <summary>
+    /// MSBuild で評価済みのプロジェクトプロパティ
+    /// </summary>
+    private sealed class EvaluatedProjectProperties
+    {
+        /// <summary>OutputType（SDK 既定値を含む）</summary>
+        public string OutputType { get; init; } = string.Empty;
+        /// <summary>ターゲットフレームワーク（複数指定時は先頭）</summary>
+        public string TargetFramework { get; init; } = string.Empty;
+        /// <summary>アセンブリ名</summary>
+        public string AssemblyName { get; init; } = string.Empty;
+        /// <summary>
+        /// 出力ディレクトリの絶対パス（MSBuild の TargetDir）。
+        /// TFM フォルダ、RuntimeIdentifier、カスタム OutputPath、Append* フラグがすべて反映済みの値。
+        /// </summary>
+        public string TargetDir { get; init; } = string.Empty;
+    }
+
+    /// <summary>
+    /// プロジェクト評価結果のキャッシュ（同一プロジェクトを複数回評価しないため）
+    /// </summary>
+    private readonly Dictionary<string, EvaluatedProjectProperties?> _evaluatedProjectCache = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// MSBuild でプロジェクトを評価してプロパティを取得する。
+    /// csproj の素読みでは SDK 既定の OutputType や Directory.Build.props 側の TargetFramework を取りこぼすため、
+    /// 評価済みの値を優先する。評価に失敗した場合は null を返し、呼び出し側が XML 読みへフォールバックする。
+    /// </summary>
+    /// <param name="projectPath">プロジェクトファイルのパス</param>
+    /// <returns>評価結果。失敗時は null</returns>
+    private EvaluatedProjectProperties? EvaluateProject(string projectPath)
+    {
+        if (_evaluatedProjectCache.TryGetValue(projectPath, out var cached))
+        {
+            return cached;
+        }
+
+        EvaluatedProjectProperties? evaluated = null;
+        try
+        {
+            evaluated = EvaluateProjectCore(projectPath, null);
+
+            // マルチターゲットのプロジェクトは TargetFramework 未指定だと TargetDir が空になるため、
+            // 採用する TFM を明示して評価し直し、実際の出力先を取得する
+            if (evaluated != null && string.IsNullOrEmpty(evaluated.TargetDir) && !string.IsNullOrEmpty(evaluated.TargetFramework))
+            {
+                evaluated = EvaluateProjectCore(projectPath, evaluated.TargetFramework) ?? evaluated;
+            }
+        }
+        catch (Exception ex)
+        {
+            LogMessage($"プロジェクトの MSBuild 評価に失敗しました（XML 読みへフォールバックします）: {Path.GetFileName(projectPath)} - {ex.Message}");
+        }
+
+        // 失敗 (null) も含めてキャッシュする。キャッシュは変換のたびにクリアされるため陳腐化せず、
+        // 1回の変換内で同じプロジェクトを二重評価・二重ログするのを防げる。
+        _evaluatedProjectCache[projectPath] = evaluated;
+        return evaluated;
+    }
+
+    /// <summary>
+    /// MSBuild でプロジェクトを1回評価する
+    /// </summary>
+    /// <param name="projectPath">プロジェクトファイルのパス</param>
+    /// <param name="targetFramework">評価に使う TargetFramework（マルチターゲット解決用。null なら未指定）</param>
+    /// <returns>評価結果</returns>
+    private static EvaluatedProjectProperties EvaluateProjectCore(string projectPath, string? targetFramework)
+    {
+        // launch.json は Debug 構成向けに生成するため、評価も Debug で行う
+        var globalProperties = new Dictionary<string, string> { ["Configuration"] = "Debug" };
+        if (!string.IsNullOrEmpty(targetFramework))
+        {
+            globalProperties["TargetFramework"] = targetFramework;
+        }
+
+        using var collection = new ProjectCollection(globalProperties);
+        var project = collection.LoadProject(projectPath);
+
+        var evaluatedTargetFramework = project.GetPropertyValue("TargetFramework");
+        if (string.IsNullOrEmpty(evaluatedTargetFramework))
+        {
+            evaluatedTargetFramework = project.GetPropertyValue("TargetFrameworks")
+                .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .FirstOrDefault() ?? string.Empty;
+        }
+
+        return new EvaluatedProjectProperties
+        {
+            OutputType = project.GetPropertyValue("OutputType"),
+            TargetFramework = evaluatedTargetFramework,
+            AssemblyName = project.GetPropertyValue("AssemblyName"),
+            TargetDir = project.GetPropertyValue("TargetDir")
+        };
     }
 
     /// <summary>
@@ -415,22 +535,36 @@ public partial class VSCodeGenerator
     /// <returns>実行可能な場合はtrue</returns>
     private bool IsExecutableProject(string projectPath)
     {
+        if (!File.Exists(projectPath))
+        {
+            return false;
+        }
+
+        // MSBuild 評価が通れば、SDK 既定の OutputType（Web / Worker SDK は既定で Exe）も反映される
+        var evaluated = EvaluateProject(projectPath);
+        if (!string.IsNullOrEmpty(evaluated?.OutputType))
+        {
+            return evaluated.OutputType is "Exe" or "WinExe";
+        }
+
         try
         {
-            if (!File.Exists(projectPath))
-            {
-                return false;
-            }
-
-            // プロジェクトファイルをXMLとして読み込み
+            // フォールバック: プロジェクトファイルをXMLとして読み込み
             var doc = XDocument.Load(projectPath);
             var ns = doc.Root?.GetDefaultNamespace() ?? XNamespace.None;
 
             // OutputType要素を検索
             var outputType = doc.Descendants(ns + "OutputType").FirstOrDefault()?.Value;
+            if (!string.IsNullOrEmpty(outputType))
+            {
+                // Exe または WinExe なら実行可能とみなす
+                return outputType is "Exe" or "WinExe";
+            }
 
-            // Exe または WinExe なら実行可能とみなす
-            return outputType is "Exe" or "WinExe";
+            // OutputType 未指定でも、Web / Worker SDK は SDK 側の既定が Exe なので実行可能とみなす
+            var sdk = doc.Root?.Attribute("Sdk")?.Value ?? string.Empty;
+            return sdk.StartsWith("Microsoft.NET.Sdk.Web", StringComparison.OrdinalIgnoreCase)
+                || sdk.StartsWith("Microsoft.NET.Sdk.Worker", StringComparison.OrdinalIgnoreCase);
         }
         catch
         {
@@ -490,16 +624,25 @@ public partial class VSCodeGenerator
             // ※ WACK の警告は、アプリの一部である場合は無視できるとされています。
             using var process = new Process();
             process.StartInfo.FileName = "dotnet";
-            process.StartInfo.Arguments = "sln migrate";
+            // 対象を明示しないと、同一ディレクトリに .sln が複数あるとき migrate が失敗または別のソリューションを対象にする
+            process.StartInfo.Arguments = $"sln \"{Path.GetFileName(solutionPath)}\" migrate";
             process.StartInfo.WorkingDirectory = solutionDir;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.Start();
-            var stdout = process.StandardOutput.ReadToEnd();
-            var stderr = process.StandardError.ReadToEnd();
-            process.WaitForExit();
+            // 逐次 ReadToEnd では相手側パイプが埋まるとデッドロックしうるため、非同期読み取り + タイムアウト付き待機にする
+            var stdoutTask = process.StandardOutput.ReadToEndAsync();
+            var stderrTask = process.StandardError.ReadToEndAsync();
+            if (!process.WaitForExit(DotnetSlnMigrateTimeoutMs))
+            {
+                try { process.Kill(entireProcessTree: true); } catch { /* 既に終了している場合は無視 */ }
+                LogMessage($"dotnet sln migrate が {DotnetSlnMigrateTimeoutMs / 1000} 秒以内に終了しなかったため中断しました。.sln のまま続行します。");
+                return;
+            }
+            var stderr = stderrTask.GetAwaiter().GetResult();
+            _ = stdoutTask.GetAwaiter().GetResult();
             if (process.ExitCode == 0)
             {
                 LogMessage(".slnx ファイルを dotnet sln migrate で生成しました。");
@@ -619,9 +762,16 @@ public partial class VSCodeGenerator
             var doc = XDocument.Load(projectPath);
             var ns = doc.Root?.GetDefaultNamespace() ?? XNamespace.None;
 
+            // MSBuild 評価が通れば、Directory.Build.props 等で定義された値も反映される
+            var evaluated = EvaluateProject(projectPath);
+
             // ターゲットフレームワークを取得（単一または複数から先頭のものを選択）
-            var targetFramework = doc.Descendants(ns + "TargetFramework").FirstOrDefault()?.Value
+            var targetFramework = evaluated?.TargetFramework;
+            if (string.IsNullOrEmpty(targetFramework))
+            {
+                targetFramework = doc.Descendants(ns + "TargetFramework").FirstOrDefault()?.Value
                                ?? doc.Descendants(ns + "TargetFrameworks").FirstOrDefault()?.Value?.Split(';').FirstOrDefault();
+            }
 
             if (string.IsNullOrEmpty(targetFramework))
             {
@@ -629,31 +779,45 @@ public partial class VSCodeGenerator
                 targetFramework = string.Empty;
             }
 
-            string programPath;
+            // 出力ファイル名は AssemblyName が指定されていればそれを使う（未指定ならプロジェクト名）
+            var assemblyName = evaluated?.AssemblyName;
+            if (string.IsNullOrWhiteSpace(assemblyName))
+            {
+                assemblyName = doc.Descendants(ns + "AssemblyName").FirstOrDefault()?.Value;
+            }
+            var outputName = string.IsNullOrWhiteSpace(assemblyName) ? projectName : assemblyName.Trim();
+
+            string extension;
             string type;
 
             // VSCode用のパス区切り文字（スラッシュ）に変換し、末尾にスラッシュを付与
             var normalizedRelativePath = relativeProjectDir == "." ? "" : relativeProjectDir.Replace('\\', '/') + "/";
 
-            // .NET (Core) か .NET Framework かを判定してパスとデバッガタイプを設定
+            // .NET (Core) か .NET Framework かを判定して拡張子とデバッガタイプを設定
             if (targetFramework.StartsWith("net") && !targetFramework.Contains("-windows") && !targetFramework.StartsWith("net4"))
             {
                 // .NET Core / .NET 5+ (Linux/Mac/Windows 共通)
-                programPath = $"${{workspaceFolder}}/{normalizedRelativePath}bin/Debug/{targetFramework}/{projectName}.dll";
+                extension = ".dll";
                 type = "coreclr";
             }
             else if (targetFramework.StartsWith("net4") || string.IsNullOrEmpty(targetFramework))
             {
                 // .NET Framework (Windows 専用)
-                programPath = $"${{workspaceFolder}}/{normalizedRelativePath}bin/Debug/{projectName}.exe";
+                extension = ".exe";
                 type = "clr";
             }
             else
             {
                 // その他 (.NET 5+ windows-specific など)
-                programPath = $"${{workspaceFolder}}/{normalizedRelativePath}bin/Debug/{targetFramework}/{projectName}.exe";
+                extension = ".exe";
                 type = "coreclr";
             }
+
+            // 出力ディレクトリは MSBuild 評価の TargetDir を最優先で使う。
+            // TFM フォルダ・RuntimeIdentifier・カスタム OutputPath・Append* フラグがすべて反映済みで、
+            // これらを文字列から組み立て直すと net4x の既定 RID などで誤ったパスになる。
+            var outputDir = BuildOutputDirectory(evaluated?.TargetDir, solutionDir, normalizedRelativePath, targetFramework);
+            var programPath = $"${{workspaceFolder}}/{outputDir}{outputName}{extension}";
 
             return new
             {
@@ -668,11 +832,36 @@ public partial class VSCodeGenerator
                 stopAtEntry = false
             };
         }
-        catch
+        catch (Exception ex)
         {
-            // 設定作成に失敗した場合はnullを返す
+            // 設定作成に失敗した場合はnullを返す（呼び出し側でスキップ件数を警告に載せる）
+            LogMessage($"launch 構成の作成に失敗しました: {projectName} - {ex.Message}");
             return null;
         }
+    }
+
+    /// <summary>
+    /// launch.json の program に使う出力ディレクトリ（workspaceFolder からの相対、末尾スラッシュ付き）を組み立てる
+    /// </summary>
+    /// <param name="targetDir">MSBuild 評価済みの TargetDir（絶対パス）。取得できていない場合は null または空</param>
+    /// <param name="solutionDir">ソリューションディレクトリのパス</param>
+    /// <param name="normalizedRelativeProjectDir">ソリューションからプロジェクトディレクトリへの相対パス（末尾スラッシュ付き）</param>
+    /// <param name="targetFramework">ターゲットフレームワーク</param>
+    /// <returns>末尾スラッシュ付きの相対ディレクトリ（ソリューション直下なら空文字）</returns>
+    private static string BuildOutputDirectory(string? targetDir, string solutionDir, string normalizedRelativeProjectDir, string targetFramework)
+    {
+        if (!string.IsNullOrEmpty(targetDir))
+        {
+            var relative = Path.GetRelativePath(solutionDir, targetDir).Replace('\\', '/').TrimEnd('/');
+            return relative is "" or "." ? string.Empty : relative + "/";
+        }
+
+        // フォールバック: MSBuild 評価が失敗したときだけ既定レイアウトを仮定して組み立てる。
+        // TargetFramework が取れているなら SDK 形式なので、net4x でも TFM フォルダ配下に出力される。
+        // TargetFramework が空の場合だけ、TargetFrameworkVersion しか持たない旧形式とみなして bin/Debug 直下にする。
+        return string.IsNullOrEmpty(targetFramework)
+            ? $"{normalizedRelativeProjectDir}bin/Debug/"
+            : $"{normalizedRelativeProjectDir}bin/Debug/{targetFramework}/";
     }
 
     /// <summary>
@@ -771,12 +960,29 @@ public partial class VSCodeGenerator
     }
 
     /// <summary>
-    /// VSCode設定ファイルを生成する（同期版。既存 .vscode がある場合は削除せず tasks.json のみ上書き）
+    /// VSCode設定ファイルを生成する（同期版。既存 .vscode がある場合は削除せず tasks.json のみ上書きし、既存 launch.json は変更しない）
     /// </summary>
     /// <param name="solutionPath">元のソリューションファイルのパス</param>
-    public void GenerateVSCodeFiles(string solutionPath)
+    /// <returns>生成結果</returns>
+    public VSCodeGenerationResult GenerateVSCodeFiles(string solutionPath)
     {
-        GenerateVSCodeFilesAsync(solutionPath, null).GetAwaiter().GetResult();
+        return GenerateVSCodeFilesAsync(solutionPath, null).GetAwaiter().GetResult();
+    }
+
+    /// <summary>
+    /// MSBuild 実行ファイルが利用可能かを検証する。未検出のまま tasks.json を書くと command が空になり、
+    /// VS Code 上でビルドタスクが必ず失敗するため、生成前に失敗として扱う。
+    /// </summary>
+    /// <exception cref="InvalidOperationException">MSBuild.exe が見つからない場合</exception>
+    private void EnsureMSBuildAvailable()
+    {
+        if (!string.IsNullOrWhiteSpace(_msbuildExecutablePath) && File.Exists(_msbuildExecutablePath))
+        {
+            return;
+        }
+
+        LogMessage("MSBuild.exe が見つからないため、VSCode 設定ファイルの生成を中止します。");
+        throw new InvalidOperationException(App.Text("Result.Error.MSBuildNotFound"));
     }
 
     /// <summary>
@@ -784,17 +990,27 @@ public partial class VSCodeGenerator
     /// </summary>
     /// <param name="solutionPath">元のソリューションファイルのパス</param>
     /// <param name="confirmOverwriteVscodeAsync">既存 .vscode がある場合の確認（true=削除して再生成、false=保持して tasks.json のみ上書き）。null の場合は削除しない</param>
-    public async Task GenerateVSCodeFilesAsync(string solutionPath, Func<string, Task<bool>>? confirmOverwriteVscodeAsync = null)
+    /// <returns>生成結果（警告を含む）</returns>
+    public async Task<VSCodeGenerationResult> GenerateVSCodeFilesAsync(string solutionPath, Func<string, Task<bool>>? confirmOverwriteVscodeAsync = null)
     {
+        // MSBuild 未検出のまま生成すると空 command の tasks.json ができるため、副作用を出す前に失敗させる
+        EnsureMSBuildAvailable();
+
+        // 前回変換以降に csproj / Directory.Build.props が編集されている可能性があるため、
+        // 変換のたびに評価結果を捨てて読み直す（Generator はウィンドウ生存中ずっと再利用される）
+        _evaluatedProjectCache.Clear();
+
+        var result = new VSCodeGenerationResult();
         var solutionDir = Path.GetDirectoryName(solutionPath)!;
         var solutionName = Path.GetFileNameWithoutExtension(solutionPath);
         var pathForOutput = GetSolutionPathForOutput(solutionPath);
         var solutionFileName = Path.GetFileName(pathForOutput);
         var vscodeDir = Path.Combine(solutionDir, VSCodeDirectoryName);
+        var keepExistingLaunchJson = false;
 
         if (Directory.Exists(vscodeDir))
         {
-            const string message = "既存の.vscodeフォルダが見つかりました。\n削除して再生成しますか？\n\n「削除しない」を選ぶと tasks.json のみ上書きします。";
+            var message = App.Text("Confirm.ExistingVSCode");
             var deleteAndRegenerate = confirmOverwriteVscodeAsync != null && await confirmOverwriteVscodeAsync(message).ConfigureAwait(false);
             if (deleteAndRegenerate)
             {
@@ -805,7 +1021,11 @@ public partial class VSCodeGenerator
             }
             else
             {
-                LogMessage("既存の.vscodeフォルダを保持し、tasks.jsonのみ上書きします。");
+                // 保持を選んだ場合、既存の launch.json は利用者が手で編集している可能性があるため上書きしない
+                keepExistingLaunchJson = File.Exists(Path.Combine(vscodeDir, LaunchJsonFileName));
+                LogMessage(keepExistingLaunchJson
+                    ? "既存の.vscodeフォルダを保持し、tasks.jsonのみ上書きします（既存のlaunch.jsonは変更しません）。"
+                    : "既存の.vscodeフォルダを保持し、tasks.jsonを上書きしてlaunch.jsonを新規生成します。");
             }
         }
         else
@@ -815,8 +1035,19 @@ public partial class VSCodeGenerator
         }
 
         GenerateTasksJson(vscodeDir, solutionName, solutionFileName);
-        GenerateLaunchJson(vscodeDir, solutionPath, solutionName);
+        result.TasksJsonWritten = true;
+
+        if (keepExistingLaunchJson)
+        {
+            result.LaunchJsonKept = true;
+        }
+        else
+        {
+            GenerateLaunchJson(vscodeDir, solutionPath, solutionName, result);
+        }
+
         LogMessage("VSCode設定ファイル生成が完了しました。");
+        return result;
     }
 
     /// <summary>
@@ -829,4 +1060,28 @@ public partial class VSCodeGenerator
         var jsonString = JsonSerializer.Serialize(obj, JsonOptions);
         File.WriteAllText(filePath, jsonString, System.Text.Encoding.UTF8);
     }
+}
+
+/// <summary>
+/// VSCode 設定ファイル生成の結果。完全成功と部分成功を呼び出し側で区別するために使う。
+/// </summary>
+public sealed class VSCodeGenerationResult
+{
+    /// <summary>tasks.json を書き出したか</summary>
+    public bool TasksJsonWritten { get; set; }
+
+    /// <summary>launch.json を書き出したか</summary>
+    public bool LaunchJsonWritten { get; set; }
+
+    /// <summary>既存の launch.json を保持して上書きしなかったか</summary>
+    public bool LaunchJsonKept { get; set; }
+
+    /// <summary>launch.json に出力したデバッグ構成の数</summary>
+    public int LaunchConfigurationCount { get; set; }
+
+    /// <summary>利用者へ提示すべき警告（ローカライズ済み）</summary>
+    public List<string> Warnings { get; } = [];
+
+    /// <summary>警告なしで完了したか</summary>
+    public bool IsFullSuccess => Warnings.Count == 0;
 }
