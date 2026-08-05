@@ -31,11 +31,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.1.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.1.0" />
-    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.0" />
+    <PackageReference Include="Avalonia" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.1" />
     <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="SuperLightLogger" Version="1.0.10" />
@@ -44,7 +44,7 @@
     <!-- Velopack は VelopackUpdateDialog.Avalonia 経由の推移参照に一本化（Lhamiel パターン）。
          旧 dialog 1.0.3 は NuGet.Versioning を参照しており、Velopack 1.0.1 がそれを配布しないため
          「アップデート確認」が FileNotFoundException で失敗していた。1.0.4 で参照撤去済み。 -->
-    <PackageReference Include="VelopackUpdateDialog.Avalonia" Version="1.0.12" />
+    <PackageReference Include="VelopackUpdateDialog.Avalonia" Version="1.0.13" />
   </ItemGroup>
 
   <ItemGroup>
