@@ -39,7 +39,7 @@
     <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="SuperLightLogger" Version="1.0.12" />
-    <PackageReference Include="Microsoft.Build" Version="18.8.2" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build" Version="18.9.6" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
     <!-- Velopack は VelopackUpdateDialog.Avalonia 経由の推移参照に一本化（Lhamiel パターン）。
          旧 dialog 1.0.3 は NuGet.Versioning を参照しており、Velopack 1.0.1 がそれを配布しないため
