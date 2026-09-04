@@ -47,7 +47,7 @@ Visual Studio のソリューションファイル（`.sln` / `.slnx`）を **VS
 
 ## ⚠️ 注意事項
 
-- **既存 `.vscode/` フォルダがある場合**: 削除して再作成するか、既存設定を残して `tasks.json` だけ更新するかを確認ダイアログで選べます。残す方を選んだ場合、既存の `launch.json` は上書きしません（まだ無いときだけ新規生成します）
+- **既存 `.vscode/` フォルダがある場合**: 再生成して置き換えるか、既存設定を残して `tasks.json` だけ更新するかを確認ダイアログで選べます。再生成では新しいファイルの生成完了まで旧設定を保持します。残す方を選んだ場合、既存の `launch.json` は上書きしません（まだ無いときだけ新規生成します）
 - **`launch.json` が生成されないとき**: ソリューション内に実行可能プロジェクト（`OutputType` が `Exe` / `WinExe`）が見つからなかった可能性があります。クラスライブラリ専用ソリューションなどでは生成されません。この場合は「警告付きで完了」ダイアログで理由をお知らせします
 - **`launch.json` の起動パス**: MSBuild でプロジェクトを評価して実際の出力先を求めるため、`AssemblyName` / `OutputPath` / `RuntimeIdentifier` / `AppendTargetFrameworkToOutputPath` を変更している場合も追従します。評価できないプロジェクト（解決できない SDK など）だけ `bin/Debug/<TargetFramework>/` の既定レイアウトを仮定するので、その場合は生成後に `program` を確認してください
 - **`.sln` を渡した場合**: 同名の `.slnx` が無ければ `dotnet sln migrate` を実行して `.slnx` を作成し、`tasks.json` はその `.slnx` を対象にします（元の `.sln` は残ります）

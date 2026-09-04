@@ -186,9 +186,24 @@ $zoneName = ([uri]$BaseUrl).Host -replace '^[^.]+\.', ''   # <sub>.kagayoi.com �
 $zoneResp = Invoke-RestMethod -Uri "https://api.cloudflare.com/client/v4/zones?name=$zoneName" -Headers $cfHeaders -TimeoutSec 30
 if (-not $zoneResp.success -or @($zoneResp.result).Count -eq 0) { throw "Cloudflare zone '$zoneName' の取得に失敗しました" }
 $zoneId = $zoneResp.result[0].id
-$purgeUrls = @(Get-ChildItem $ArtifactsDir -File | Where-Object { $_.Name -notlike '*.nupkg' } | ForEach-Object { "$BaseUrl/$($_.Name)" })
+$purgeUrls = @()
+# 配信済みの実物と照合し、古い内容が残る URL だけをパージする。
+$http = [System.Net.Http.HttpClient]::new()
+$http.Timeout = [TimeSpan]::FromSeconds(60)
+try {
+    foreach ($artifact in Get-ChildItem $ArtifactsDir -File | Where-Object { $_.Name -notlike '*.nupkg' }) {
+        $artifactUrl = "$BaseUrl/$($artifact.Name)"
+        $bytes = $http.GetByteArrayAsync("${artifactUrl}?_=$([Guid]::NewGuid().ToString('N'))").GetAwaiter().GetResult()
+        $remoteHash = [Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData($bytes))
+        if ($remoteHash -ne (Get-FileHash $artifact.FullName -Algorithm SHA256).Hash) {
+            $purgeUrls += $artifactUrl
+        }
+    }
+} finally {
+    $http.Dispose()
+}
 if ($purgeUrls.Count -gt 0) {
-    $purgeBody = "{`"files`":$(ConvertTo-Json -InputObject $purgeUrls -AsArray -Compress)}"
+    $purgeBody = [PSCustomObject]@{ files = @($purgeUrls) } | ConvertTo-Json -Compress
     $purgeResp = Invoke-RestMethod -Method Post -Uri "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache" `
         -Headers $cfHeaders -ContentType 'application/json' -Body $purgeBody -TimeoutSec 30
     if (-not $purgeResp.success) { throw "Cloudflare キャッシュパージに失敗しました: $($purgeResp.errors | ConvertTo-Json -Compress)" }
