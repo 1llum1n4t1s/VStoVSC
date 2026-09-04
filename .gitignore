@@ -16,7 +16,5 @@ local-release/
 *.userosscache
 *.sln.docstates
 
-# 個人開発環境用 (MCP / Serena)
 .mcp.json
-.serena/
 .claude/
