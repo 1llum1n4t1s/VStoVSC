@@ -16,6 +16,7 @@
 [CmdletBinding()]
 param(
     [switch]$SkipUpload,
+    [switch]$VerifyOnly,
     [string[]]$Runtimes = @('win-x64')
 )
 
@@ -82,11 +83,13 @@ if (-not $cert) {
 Write-Host "署名証明書: $($cert.Subject) (期限 $($cert.NotAfter.ToString('yyyy-MM-dd')))"
 
 # vpk を固定バージョンで用意
+if (-not $VerifyOnly) {
 $vpkInstalled = (dotnet tool list --global | Select-String -SimpleMatch 'vpk') -match [regex]::Escape($VpkVersion)
 if (-not $vpkInstalled) {
     Write-Host "vpk $VpkVersion をインストールします..."
     dotnet tool uninstall --global vpk 2>$null | Out-Null
     Invoke-Native 'vpk のインストール' { dotnet tool install --global vpk --version $VpkVersion }
+}
 }
 
 # Cloudflare トークン (アップロード時のみ必要)
@@ -97,6 +100,13 @@ if (-not $SkipUpload) {
     $env:CLOUDFLARE_ACCOUNT_ID = $AccountId
 }
 
+if ($VerifyOnly) {
+    if ($SkipUpload) { throw '-VerifyOnly と -SkipUpload は併用できません' }
+    $publishedManifest = Get-Content (Join-Path $ArtifactsDir 'releases.win.json') -Raw | ConvertFrom-Json
+    if (@($publishedManifest.Assets).Count -eq 0 -or @($publishedManifest.Assets | Where-Object { $_.Version -ne $version }).Count -gt 0) {
+        throw '既存成果物のバージョンが現在のリリースと一致しません'
+    }
+} else {
 if (Test-Path $WorkDir) { Remove-Item $WorkDir -Recurse -Force }
 New-Item -ItemType Directory -Path $ArtifactsDir -Force | Out-Null
 
@@ -174,6 +184,7 @@ foreach ($f in Get-ChildItem $ArtifactsDir -File) {
     $uploaded++
 }
 Write-Host "✅ R2 アップロード完了: $uploaded ファイル"
+}
 
 # ---- 2.5 Cloudflare エッジキャッシュのパージ ----
 # 固定名ファイル (Setup.exe / Portable.zip / RELEASES / releases.*.json / assets.*.json) は
@@ -189,7 +200,7 @@ $zoneId = $zoneResp.result[0].id
 $purgeUrls = @()
 # 配信済みの実物と照合し、古い内容が残る URL だけをパージする。
 $http = [System.Net.Http.HttpClient]::new()
-$http.Timeout = [TimeSpan]::FromSeconds(60)
+$http.Timeout = [TimeSpan]::FromMinutes(5)
 try {
     foreach ($artifact in Get-ChildItem $ArtifactsDir -File | Where-Object { $_.Name -notlike '*.nupkg' }) {
         $artifactUrl = "$BaseUrl/$($artifact.Name)"
