@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} converti avec succès</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Erreur de conversion</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Veuillez sélectionner un fichier .sln ou .slnx</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">Impossible d’obtenir le chemin local du fichier. Enregistrez la solution et ses projets dans un dossier local, puis sélectionnez-la à nouveau.</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Fichier introuvable : {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Une erreur s'est produite : {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe est introuvable, les fichiers de configuration VS Code n'ont donc pas été générés. Installez Visual Studio ou les MSBuild Build Tools, puis réessayez.</x:String>

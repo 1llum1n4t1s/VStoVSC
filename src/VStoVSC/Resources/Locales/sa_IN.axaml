@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} सफलतया परिवर्तितम्</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">परिवर्तनदोषः</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln अथवा .slnx सञ्चिकां चिनोतु</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">स्थानीयसञ्चिकायाः पन्थाः प्राप्तुं न शक्यते। समाधानं तस्य परियोजनाश्च स्थानीयपुटे सञ्चित्य पुनः चिनोतु।</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">सञ्चिका न प्राप्ता: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">दोषः अभवत्: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe न प्राप्तम्, अतः VS Code विन्याससंचिकाः न रचिताः। Visual Studio अथवा MSBuild Build Tools संस्थाप्य पुनः प्रयततु।</x:String>

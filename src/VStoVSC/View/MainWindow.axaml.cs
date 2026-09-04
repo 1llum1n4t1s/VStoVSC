@@ -144,14 +144,14 @@ public partial class MainWindow : Window
         if (!e.DataTransfer.Contains(DataFormat.File)) return;
 
         var files = e.DataTransfer.TryGetFiles();
-        if (files is null || files.Length == 0) return;
-
-        foreach (var item in files)
+        foreach (var item in files ?? [])
         {
             var path = item.TryGetLocalPath();
             if (string.IsNullOrEmpty(path)) continue;
             await vm.DropSolutionAsync(path);
-            break;
+            return;
         }
+
+        await MessageService.ShowError(App.Text("Result.Error.LocalPathUnavailable"), App.Text("Result.Error.Title"));
     }
 }

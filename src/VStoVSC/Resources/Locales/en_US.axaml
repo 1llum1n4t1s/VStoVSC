@@ -28,6 +28,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Successfully converted {0}</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Conversion Error</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Please select a .sln or .slnx file</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">The local file path could not be obtained. Save the solution and its projects in a local folder, then select it again.</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">File not found: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">An error occurred: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe was not found, so the VS Code settings were not generated. Install Visual Studio or the MSBuild Build Tools and try again.</x:String>

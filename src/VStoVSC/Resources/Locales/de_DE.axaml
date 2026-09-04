@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} erfolgreich konvertiert</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Konvertierungsfehler</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Bitte wählen Sie eine .sln oder .slnx-Datei</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">Der lokale Dateipfad konnte nicht ermittelt werden. Speichern Sie die Projektmappe und ihre Projekte in einem lokalen Ordner und wählen Sie sie erneut aus.</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Datei nicht gefunden: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Ein Fehler ist aufgetreten: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe wurde nicht gefunden, daher wurden keine VS Code-Einstellungsdateien erzeugt. Installieren Sie Visual Studio oder die MSBuild Build Tools und versuchen Sie es erneut.</x:String>

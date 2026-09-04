@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Matagumpay na na-convert ang {0}</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Error sa Conversion</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Pumili ng .sln o .slnx file</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">Hindi makuha ang lokal na path ng file. I-save ang solution at mga proyekto nito sa isang lokal na folder, saka piliin itong muli.</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Hindi nahanap ang file: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">May nangyaring error: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">Hindi natagpuan ang MSBuild.exe, kaya hindi nabuo ang mga file ng setting ng VS Code. I-install ang Visual Studio o ang MSBuild Build Tools at subukan muli.</x:String>

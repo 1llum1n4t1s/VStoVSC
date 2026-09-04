@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} feliciter conversum est</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Error Conversionis</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Elige fasciculum .sln vel .slnx</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">Semita localis fasciculi inveniri non potuit. Solutionem et eius proiecta in directorio locali serva, deinde iterum elige.</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Fasciculus non inventus: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Error occurrit: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe non inventum est, itaque tabellae configurationis VS Code non generatae sunt. Visual Studio vel MSBuild Build Tools instrue et iterum conare.</x:String>

@@ -39,6 +39,10 @@ public sealed class FilePickerService : IFilePickerService
 
         var files = await provider.OpenFilePickerAsync(options);
         var file = files.Count > 0 ? files[0] : null;
-        return file?.TryGetLocalPath();
+        if (file == null) return null; // ダイアログのキャンセル
+        var path = file.TryGetLocalPath();
+        if (string.IsNullOrEmpty(path))
+            throw new System.IO.IOException(App.Text("Result.Error.LocalPathUnavailable"));
+        return path;
     }
 }

@@ -360,6 +360,10 @@ public partial class VSCodeGenerator
     /// <param name="solutionName">ソリューション名</param>
     /// <param name="result">生成結果の記録先（省略可）</param>
     public void GenerateLaunchJson(string vscodeDir, string solutionPath, string solutionName, VSCodeGenerationResult? result = null)
+        => GenerateLaunchJsonCore(vscodeDir, GetSolutionPathForOutput(solutionPath), solutionName, result, GenerationMessages.Capture(), false);
+
+    private void GenerateLaunchJsonCore(string vscodeDir, string solutionPath, string solutionName,
+        VSCodeGenerationResult? result, GenerationMessages messages, bool throwOnError)
     {
         var solutionDir = Path.GetDirectoryName(solutionPath)!;
         try
@@ -369,7 +373,7 @@ public partial class VSCodeGenerator
             if (executableProjects.Count == 0)
             {
                 LogMessage("実行可能プロジェクトが見つからないため launch.json は生成しません。");
-                result?.Warnings.Add(App.Text("Result.Warning.NoExecutableProject"));
+                result?.Warnings.Add(messages.NoExecutableProject);
                 return;
             }
 
@@ -387,7 +391,7 @@ public partial class VSCodeGenerator
             if (configurations.Count == 0)
             {
                 LogMessage("launch.json の構成を1件も作成できませんでした。");
-                result?.Warnings.Add(App.Text("Result.Warning.LaunchFailed"));
+                result?.Warnings.Add(messages.LaunchFailed);
                 return;
             }
 
@@ -396,7 +400,7 @@ public partial class VSCodeGenerator
             {
                 var skipped = executableProjects.Count - configurations.Count;
                 LogMessage($"launch 構成を作成できなかったプロジェクトが {skipped} 件あります。");
-                result?.Warnings.Add(App.Text("Result.Warning.LaunchPartial", skipped));
+                result?.Warnings.Add(string.Format(messages.LaunchPartial, skipped));
             }
 
             object launchRoot = configurations.Count >= 2
@@ -429,7 +433,8 @@ public partial class VSCodeGenerator
         catch (Exception ex)
         {
             LogMessage($"launch.json生成中にエラーが発生: {ex.Message}");
-            result?.Warnings.Add(App.Text("Result.Warning.LaunchError", ex.Message));
+            if (throwOnError) throw;
+            result?.Warnings.Add(string.Format(messages.LaunchError, ex.Message));
         }
     }
 
@@ -596,11 +601,11 @@ public partial class VSCodeGenerator
     /// <returns>プロジェクト情報のリスト</returns>
     private List<ProjectInfo> GetProjects(string solutionPath)
     {
-        var pathForOutput = GetSolutionPathForOutput(solutionPath);
-        var extension = Path.GetExtension(pathForOutput).ToLowerInvariant();
+        // 呼び出し元で一度だけ確定したパスを解析し、失敗した migrate を再試行しない。
+        var extension = Path.GetExtension(solutionPath).ToLowerInvariant();
         if (extension == ".slnx")
-            return GetProjectsFromSlnx(pathForOutput);
-        return GetProjectsFromSln(pathForOutput);
+            return GetProjectsFromSlnx(solutionPath);
+        return GetProjectsFromSln(solutionPath);
     }
 
     /// <summary>
@@ -694,6 +699,7 @@ public partial class VSCodeGenerator
         catch (Exception ex)
         {
             LogMessage($".slnxファイルの解析中にエラーが発生しました: {ex.Message}");
+            throw;
         }
 
         return projects;
@@ -725,6 +731,7 @@ public partial class VSCodeGenerator
         catch (Exception ex)
         {
             LogMessage($".slnファイルの解析中にエラーが発生しました: {ex.Message}");
+            throw;
         }
         return projects;
     }
@@ -993,61 +1000,95 @@ public partial class VSCodeGenerator
     /// <returns>生成結果（警告を含む）</returns>
     public async Task<VSCodeGenerationResult> GenerateVSCodeFilesAsync(string solutionPath, Func<string, Task<bool>>? confirmOverwriteVscodeAsync = null)
     {
-        // MSBuild 未検出のまま生成すると空 command の tasks.json ができるため、副作用を出す前に失敗させる
         EnsureMSBuildAvailable();
+        solutionPath = Path.GetFullPath(solutionPath);
+        var vscodeDir = Path.Combine(Path.GetDirectoryName(solutionPath)!, VSCodeDirectoryName);
+        // ローカライズと確認ダイアログは呼び出し元の UI スレッドで処理する。
+        var messages = GenerationMessages.Capture();
+        var replaceDirectory = Directory.Exists(vscodeDir) && confirmOverwriteVscodeAsync != null
+            && await confirmOverwriteVscodeAsync(App.Text("Confirm.ExistingVSCode"));
+        return await Task.Run(() => GenerateVSCodeFilesCore(solutionPath, vscodeDir, replaceDirectory, messages))
+            .ConfigureAwait(false);
+    }
 
-        // 前回変換以降に csproj / Directory.Build.props が編集されている可能性があるため、
-        // 変換のたびに評価結果を捨てて読み直す（Generator はウィンドウ生存中ずっと再利用される）
+    private VSCodeGenerationResult GenerateVSCodeFilesCore(string solutionPath, string vscodeDir,
+        bool replaceDirectory, GenerationMessages messages)
+    {
         _evaluatedProjectCache.Clear();
-
         var result = new VSCodeGenerationResult();
-        var solutionDir = Path.GetDirectoryName(solutionPath)!;
         var solutionName = Path.GetFileNameWithoutExtension(solutionPath);
         var pathForOutput = GetSolutionPathForOutput(solutionPath);
-        var solutionFileName = Path.GetFileName(pathForOutput);
-        var vscodeDir = Path.Combine(solutionDir, VSCodeDirectoryName);
-        var keepExistingLaunchJson = false;
-
-        if (Directory.Exists(vscodeDir))
+        var keepLaunch = !replaceDirectory && File.Exists(Path.Combine(vscodeDir, LaunchJsonFileName));
+        var stagingDir = vscodeDir + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        Directory.CreateDirectory(stagingDir);
+        try
         {
-            var message = App.Text("Confirm.ExistingVSCode");
-            var deleteAndRegenerate = confirmOverwriteVscodeAsync != null && await confirmOverwriteVscodeAsync(message).ConfigureAwait(false);
-            if (deleteAndRegenerate)
-            {
-                Directory.Delete(vscodeDir, true);
-                LogMessage("既存の.vscodeフォルダを削除しました。");
-                Directory.CreateDirectory(vscodeDir);
-                LogMessage("新しい.vscodeフォルダを作成しました。");
-            }
+            // 解析・シリアライズ・書き込みが全て成功するまで既存設定に触れない。
+            GenerateTasksJson(stagingDir, solutionName, Path.GetFileName(pathForOutput));
+            result.TasksJsonWritten = true;
+            if (keepLaunch)
+                result.LaunchJsonKept = true;
+            else
+                GenerateLaunchJsonCore(stagingDir, pathForOutput, solutionName, result, messages, true);
+
+            if (replaceDirectory || !Directory.Exists(vscodeDir))
+                CommitDirectory(stagingDir, vscodeDir, result, messages);
             else
             {
-                // 保持を選んだ場合、既存の launch.json は利用者が手で編集している可能性があるため上書きしない
-                keepExistingLaunchJson = File.Exists(Path.Combine(vscodeDir, LaunchJsonFileName));
-                LogMessage(keepExistingLaunchJson
-                    ? "既存の.vscodeフォルダを保持し、tasks.jsonのみ上書きします（既存のlaunch.jsonは変更しません）。"
-                    : "既存の.vscodeフォルダを保持し、tasks.jsonを上書きしてlaunch.jsonを新規生成します。");
+                // 保持を選んだ場合は生成対象だけを置換し、その他の設定には触れない。
+                foreach (var file in Directory.EnumerateFiles(stagingDir))
+                    File.Move(file, Path.Combine(vscodeDir, Path.GetFileName(file)), overwrite: true);
             }
+            LogMessage("VSCode設定ファイル生成が完了しました。");
+            return result;
         }
-        else
+        finally
         {
-            Directory.CreateDirectory(vscodeDir);
-            LogMessage("新しい.vscodeフォルダを作成しました。");
+            if (Directory.Exists(stagingDir))
+                Directory.Delete(stagingDir, true);
+        }
+    }
+
+    private void CommitDirectory(string stagingDir, string vscodeDir, VSCodeGenerationResult result, GenerationMessages messages)
+    {
+        if (!Directory.Exists(vscodeDir))
+        {
+            Directory.Move(stagingDir, vscodeDir);
+            return;
         }
 
-        GenerateTasksJson(vscodeDir, solutionName, solutionFileName);
-        result.TasksJsonWritten = true;
-
-        if (keepExistingLaunchJson)
+        // コピーを作らず、コミット中だけ旧ディレクトリを移動して失敗時に戻す。
+        var previousDir = stagingDir + ".previous";
+        Directory.Move(vscodeDir, previousDir);
+        try
         {
-            result.LaunchJsonKept = true;
+            Directory.Move(stagingDir, vscodeDir);
         }
-        else
+        catch
         {
-            GenerateLaunchJson(vscodeDir, solutionPath, solutionName, result);
+            Directory.Move(previousDir, vscodeDir);
+            throw;
         }
 
-        LogMessage("VSCode設定ファイル生成が完了しました。");
-        return result;
+        try
+        {
+            Directory.Delete(previousDir, true);
+        }
+        catch (Exception ex)
+        {
+            // 新設定は反映済み。後始末の失敗を成功として隠さず、残存パスを通知する。
+            LogMessage($"旧設定の後始末に失敗しました: {previousDir}: {ex.Message}");
+            result.Warnings.Add(string.Format(messages.CleanupError, previousDir + ": " + ex.Message));
+        }
+    }
+
+    private sealed record GenerationMessages(string NoExecutableProject, string LaunchFailed,
+        string LaunchPartial, string LaunchError, string CleanupError)
+    {
+        public static GenerationMessages Capture() => new(
+            App.Text("Result.Warning.NoExecutableProject"), App.Text("Result.Warning.LaunchFailed"),
+            App.Text("Result.Warning.LaunchPartial"), App.Text("Result.Warning.LaunchError"),
+            App.Text("Result.Error.Generic"));
     }
 
     /// <summary>
@@ -1058,7 +1099,16 @@ public partial class VSCodeGenerator
     private static void SaveJsonFile(string filePath, object obj)
     {
         var jsonString = JsonSerializer.Serialize(obj, JsonOptions);
-        File.WriteAllText(filePath, jsonString, System.Text.Encoding.UTF8);
+        var temporaryPath = filePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            File.WriteAllText(temporaryPath, jsonString, System.Text.Encoding.UTF8);
+            File.Move(temporaryPath, filePath, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath)) File.Delete(temporaryPath);
+        }
     }
 }
 

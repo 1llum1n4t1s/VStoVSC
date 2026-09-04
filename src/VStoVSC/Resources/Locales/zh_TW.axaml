@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">已成功轉換 {0}</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">轉換錯誤</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">請選擇 .sln 或 .slnx 檔案</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">無法取得本機檔案路徑。請將方案及其專案儲存到本機資料夾，再重新選取。</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">找不到檔案: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">發生錯誤: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">找不到 MSBuild.exe，因此未產生 VS Code 設定檔。請安裝 Visual Studio 或 MSBuild 建置工具後再試一次。</x:String>

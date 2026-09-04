@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">Berhasil mengonversi {0}</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Kesalahan Konversi</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Pilih file .sln atau .slnx</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">Jalur file lokal tidak dapat diperoleh. Simpan solusi dan proyeknya di folder lokal, lalu pilih kembali.</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">File tidak ditemukan: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Terjadi kesalahan: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe tidak ditemukan, sehingga berkas konfigurasi VS Code tidak dibuat. Pasang Visual Studio atau MSBuild Build Tools lalu coba lagi.</x:String>

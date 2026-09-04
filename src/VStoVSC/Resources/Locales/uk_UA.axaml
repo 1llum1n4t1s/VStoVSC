@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} успішно перетворено</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">Помилка перетворення</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">Виберіть файл .sln або .slnx</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">Не вдалося отримати локальний шлях до файлу. Збережіть рішення та його проєкти в локальну папку й виберіть його знову.</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">Файл не знайдено: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">Сталася помилка: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">Файл MSBuild.exe не знайдено, тому файли налаштувань VS Code не створено. Установіть Visual Studio або MSBuild Build Tools і повторіть спробу.</x:String>

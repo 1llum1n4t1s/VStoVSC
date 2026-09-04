@@ -26,6 +26,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} の変換が完了しました</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">変換エラー</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln または .slnx ファイルを選択してください</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">ローカルファイルのパスを取得できませんでした。ソリューション一式をローカルフォルダに保存してから選択してください。</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">ファイルが見つかりません: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">エラーが発生しました: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe が見つからないため、VS Code 設定ファイルを生成しませんでした。Visual Studio または MSBuild Build Tools をインストールしてからやり直してください。</x:String>

@@ -23,6 +23,7 @@
   <x:String x:Key="Text.Result.Success.Message" xml:space="preserve">{0} வெற்றிகரமாக மாற்றப்பட்டது</x:String>
   <x:String x:Key="Text.Result.Error.Title" xml:space="preserve">மாற்ற பிழை</x:String>
   <x:String x:Key="Text.Result.Error.InvalidExtension" xml:space="preserve">.sln அல்லது .slnx கோப்பைத் தேர்ந்தெடுக்கவும்</x:String>
+  <x:String x:Key="Text.Result.Error.LocalPathUnavailable" xml:space="preserve">உள்ளூர் கோப்பின் பாதையைப் பெற முடியவில்லை. தீர்வையும் அதன் திட்டங்களையும் உள்ளூர் கோப்புறையில் சேமித்து, மீண்டும் தேர்ந்தெடுக்கவும்.</x:String>
   <x:String x:Key="Text.Result.Error.FileNotFound" xml:space="preserve">கோப்பு கிடைக்கவில்லை: {0}</x:String>
   <x:String x:Key="Text.Result.Error.Generic" xml:space="preserve">பிழை ஏற்பட்டது: {0}</x:String>
   <x:String x:Key="Text.Result.Error.MSBuildNotFound" xml:space="preserve">MSBuild.exe கிடைக்கவில்லை, எனவே VS Code அமைப்புக் கோப்புகள் உருவாக்கப்படவில்லை. Visual Studio அல்லது MSBuild Build Tools ஐ நிறுவிய பிறகு மீண்டும் முயற்சிக்கவும்.</x:String>
