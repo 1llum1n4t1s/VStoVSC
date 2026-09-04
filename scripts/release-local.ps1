@@ -12,6 +12,7 @@
 # 使い方:
 #   pwsh scripts/release-local.ps1                # フルリリース (build + sign + upload + cleanup)
 #   pwsh scripts/release-local.ps1 -SkipUpload    # ビルド + 署名のみ (アップロードしない動作確認用)
+#   pwsh scripts/release-local.ps1 -VerifyOnly    # 既存成果物で公開後の検証と世代整理を再開
 
 [CmdletBinding()]
 param(
@@ -199,19 +200,25 @@ if (-not $zoneResp.success -or @($zoneResp.result).Count -eq 0) { throw "Cloudfl
 $zoneId = $zoneResp.result[0].id
 $purgeUrls = @()
 # 配信済みの実物と照合し、古い内容が残る URL だけをパージする。
-$http = [System.Net.Http.HttpClient]::new()
-$http.Timeout = [TimeSpan]::FromMinutes(5)
-try {
-    foreach ($artifact in Get-ChildItem $ArtifactsDir -File | Where-Object { $_.Name -notlike '*.nupkg' }) {
-        $artifactUrl = "$BaseUrl/$($artifact.Name)"
-        $bytes = $http.GetByteArrayAsync("${artifactUrl}?_=$([Guid]::NewGuid().ToString('N'))").GetAwaiter().GetResult()
-        $remoteHash = [Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData($bytes))
-        if ($remoteHash -ne (Get-FileHash $artifact.FullName -Algorithm SHA256).Hash) {
-            $purgeUrls += $artifactUrl
-        }
+foreach ($artifact in Get-ChildItem $ArtifactsDir -File) {
+    $artifactUrl = "$BaseUrl/$($artifact.Name)"
+    Write-Host "  配信ハッシュ確認: $($artifact.Name)"
+    $verifyUrl = "${artifactUrl}?_=$([Guid]::NewGuid().ToString('N'))"
+    $head = Invoke-WebRequest -Uri $verifyUrl -Method Head -TimeoutSec 30
+    $remoteLength = [long]($head.Headers['Content-Length'] | Select-Object -First 1)
+    $etag = [string]($head.Headers['ETag'] | Select-Object -First 1)
+    # この経路は Wrangler の単一 PUT。R2 の単一パート ETag (MD5) とサイズを照合する。
+    # multipart や不明な ETag は同一性を証明できないため停止する。
+    $etag = $etag.Trim('"')
+    if ($etag -notmatch '^[0-9a-fA-F]{32}$') { throw "単一パートの ETag ではありません: $artifactUrl" }
+    $matches = $remoteLength -eq $artifact.Length -and $etag -eq (Get-FileHash $artifact.FullName -Algorithm MD5).Hash
+    if ($matches) {
+        Write-Host "  ✅ サイズと ETag (MD5) が一致: $($artifact.Name)"
+    } elseif ($artifact.Name -like '*.nupkg') {
+        throw "バージョン付き配布物が一致しません: $artifactUrl"
+    } else {
+        $purgeUrls += $artifactUrl
     }
-} finally {
-    $http.Dispose()
 }
 if ($purgeUrls.Count -gt 0) {
     $purgeBody = [PSCustomObject]@{ files = @($purgeUrls) } | ConvertTo-Json -Compress
