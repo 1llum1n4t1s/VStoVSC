@@ -40,7 +40,7 @@ Visual Studio のソリューションファイル（`.sln` / `.slnx`）を **VS
 
 | ファイル | 内容 |
 |---|---|
-| `.vscode/tasks.json` | `MSBuild ビルド (Debug)` / `(Release)` / `Clean` / `Rebuild` の 4 タスク |
+| `.vscode/tasks.json` | `ビルド - <ソリューション名> ソリューション - Debug` / `Release` と、クリーン / リビルドの 4 タスク |
 | `.vscode/launch.json` | 実行可能プロジェクト用の F5 デバッグ設定（`Exe` / `WinExe` 検出時のみ） |
 
 ---
