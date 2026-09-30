@@ -13,7 +13,7 @@ Windows x64 と .NET 10 SDK を使い、リポジトリルートで実行する�
 ```powershell
 dotnet restore VStoVSC.slnx --locked-mode
 dotnet build VStoVSC.slnx -c Release --no-restore
-dotnet test tests/VStoVSC.Tests/VStoVSC.Tests.csproj -c Release --no-build --no-restore
+dotnet test tests/VStoVSC.Tests/VStoVSC.Tests.csproj -c Release -p:Platform=x64 --no-build --no-restore
 ```
 
 - 依存変更時は lockfile を更新し、上記の locked restore で整合性を検証する。

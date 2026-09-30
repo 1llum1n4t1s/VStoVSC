@@ -106,7 +106,7 @@ public sealed class GenerationAdversarialTests
             catch (Exception ex) { completion.SetException(ex); }
         }) { IsBackground = true };
         thread.Start();
-        await completion.Task.WaitAsync(TimeSpan.FromSeconds(20));
+        await completion.Task.WaitAsync(TimeSpan.FromSeconds(20), TestContext.Current.CancellationToken);
         Assert.Equal(caller, confirmationThread);
         Assert.NotEmpty(workThreads);
         Assert.DoesNotContain(caller, workThreads);

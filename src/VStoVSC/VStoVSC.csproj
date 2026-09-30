@@ -31,20 +31,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.1.2" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.1.2" />
-    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.2" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.2" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.2" />
+    <PackageReference Include="Avalonia" Version="12.1.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.3" />
+    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.3" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.3" />
     <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="SuperLightLogger" Version="1.0.16" />
+    <PackageReference Include="SuperLightLogger" Version="1.0.17" />
+    <!-- .NET 10 のプロジェクト評価用コンパイル参照。18.9.6 が対応する最新安定版。
+         18.10.1 の .NET 向け資産は net11.0 を要求するため、正式 .NET 11 対応を確認するまで維持する。
+         実行時は Locator が検出した MSBuild を使い、パッケージの runtime は同梱しない。 -->
     <PackageReference Include="Microsoft.Build" Version="18.9.6" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
     <!-- Velopack は VelopackUpdateDialog.Avalonia 経由の推移参照に一本化（Lhamiel パターン）。
          旧 dialog 1.0.3 は NuGet.Versioning を参照しており、Velopack 1.0.1 がそれを配布しないため
          「アップデート確認」が FileNotFoundException で失敗していた。1.0.4 で参照撤去済み。 -->
-    <PackageReference Include="VelopackUpdateDialog.Avalonia" Version="1.0.17" />
+    <PackageReference Include="VelopackUpdateDialog.Avalonia" Version="1.0.19" />
   </ItemGroup>
 
   <ItemGroup>
