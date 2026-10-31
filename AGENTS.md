@@ -27,5 +27,14 @@ dotnet test tests/VStoVSC.Tests/VStoVSC.Tests.csproj -c Release -p:Platform=x64 
 - 設定変更は `SettingsManager.Mutate` / `MutateAndSave` を使う。取得した `Current` はスナップショットとして扱う。
 - 変換・更新処理の変更時は [DESIGN.md](DESIGN.md) の排他制御、ファイル保護、配信元の境界を検証する。
 - 配布用の self-contained ビルドでは restore と publish の RuntimeIdentifier / SelfContained を一致させる。具体的な処理は `scripts/release-local.ps1` を参照する。
-- リリース依頼時は `vava.config.json` が指定するローカル署名手順を使う。`release-local.ps1` はアップロード・キャッシュ削除・世代整理を含むため、通常の検証には上記の build / test を使う。`-VerifyOnly` も外部変更を伴う再開処理として扱う。
+- リリース依頼時は `scripts/release-local.ps1` によるローカル署名手順を使う。`release-local.ps1` はアップロード・キャッシュ削除・世代整理を含むため、通常の検証には上記の build / test を使う。`-VerifyOnly` も外部変更を伴う再開処理として扱う。
 - 製品ページの配信は `vps-web/deploy/deploy-lp.ps1` を使う。公開ホスト・更新ファイルの既存経路を維持する。
+
+### ローカルリリースの実行
+
+リポジトリルートで事前確認を行い、失敗時は「署名証明書が見つからないよ。SimplySign Desktop を起動してトークンでログインしてから /vava を再実行してね」。公開依頼時に成功を確認してから実行する。
+
+```powershell
+pwsh -NoProfile -Command 'if (-not (Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Subject -like "CN=Open Source Developer Yuichiro Shinozaki*" -and $_.NotAfter -gt (Get-Date) })) { exit 1 }'
+if ($LASTEXITCODE -eq 0) { pwsh -NoProfile -File scripts/release-local.ps1 } else { throw '署名証明書が見つからないよ。SimplySign Desktop を起動してトークンでログインしてから /vava を再実行してね' }
+```
