@@ -62,12 +62,12 @@
       },
       "MessageBox.Avalonia": {
         "type": "Direct",
-        "requested": "[12.0.0, )",
-        "resolved": "12.0.0",
-        "contentHash": "EPCRoeoZrArY4g2AJDw67Oi9h4y2eLNNdGGX1I7lR/eNiQHdnR5f7FedShxUdpgs5jHz69uM1prVpbP3X1rxpg==",
+        "requested": "[12.1.0, )",
+        "resolved": "12.1.0",
+        "contentHash": "/D8IGHlxcQPs79OG8ua21/dvy3aN0jkZGUGTUwjxOQSjF3e4uicPNXFHTn7wtjIB9Pw0LPS9VZc4kFsvGziKgg==",
         "dependencies": {
-          "Avalonia": "12.0.1",
-          "DialogHost.Avalonia": "0.12.1-nightly.0.1"
+          "Avalonia": "12.1.4",
+          "DialogHost.Avalonia": "0.12.3"
         }
       },
       "Microsoft.Build": {
@@ -198,8 +198,8 @@
       },
       "DialogHost.Avalonia": {
         "type": "Transitive",
-        "resolved": "0.12.1-nightly.0.1",
-        "contentHash": "+kAecd931qfA1jA2WfxcPoGK9Eed6buwvoDRinbyDqx0472fVKFzPiQucuiQL+z1Eop3+uFcRFcrgXgbdBV5sg==",
+        "resolved": "0.12.3",
+        "contentHash": "vKro74xGIqug59Ku/JO7Y+qdx8Z0DRvcDRbJvQYrnII1CEbaUPLvsd1tN59XomZnsrCi8DnTANXXDvldWJlENA==",
         "dependencies": {
           "Avalonia": "12.0.0"
         }
