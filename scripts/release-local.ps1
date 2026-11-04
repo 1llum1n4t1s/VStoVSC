@@ -52,6 +52,7 @@ function Remove-LocalWorkItem {
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot 'R2Distribution.Common.ps1')
 
 # ---- 定数 (旧 CI 版 velopack-release.yml と揃える) ----
 # Velopack (vpk) は常に最新安定版を使う (ゆろ君ルール): NuGet から実行時に最新を解決して pin する
@@ -59,7 +60,6 @@ $VpkVersion = (Invoke-RestMethod 'https://api.nuget.org/v3-flatcontainer/vpk/ind
     Where-Object { $_ -notmatch '-' } | Select-Object -Last 1
 if (-not $VpkVersion) { throw 'vpk の最新安定版バージョンの取得に失敗しました (NuGet API)' }
 Write-Host "vpk 最新安定版: $VpkVersion"
-$WranglerVersion = '4.144.0'         # サプライチェーン対策でバージョン固定
 $Bucket = 'vs2vsc-updates'
 $BaseUrl = 'https://vs2vsc.kagayoi.com'
 $AccountId = '10901bfadbf1005164774a7350082985'
@@ -206,11 +206,15 @@ if ($SkipUpload) {
 # - *.nupkg は put のみ (過去版は cleanup ステップが manifest 基準で削除)
 Write-Host '== R2 アップロード ==' -ForegroundColor Cyan
 $uploaded = 0
-foreach ($f in Get-ChildItem $ArtifactsDir -File) {
+$uploadFiles = @(Get-ChildItem $ArtifactsDir -File)
+$ordered = @($uploadFiles | Where-Object { $_.Name -notmatch '^(?:releases\..*\.json|assets\..*\.json|RELEASES(?:-.*)?)$' }) +
+    @($uploadFiles | Where-Object { $_.Name -match '^(?:releases\..*\.json|assets\..*\.json|RELEASES(?:-.*)?)$' })
+foreach ($f in $ordered) {
     Write-Host "  ↑ $($f.Name)"
-    Invoke-Native "R2 put ($($f.Name))" {
-        pnpm dlx "wrangler@$WranglerVersion" r2 object put "$Bucket/$($f.Name)" --file $f.FullName --remote
-    }
+    $immutable = $f.Name -match '(?:\.nupkg$|[-_.]\d+\.\d+\.\d+(?:[-_.]|$))'
+    $cacheControl = if ($immutable) { 'public, max-age=31536000, immutable' } else { 'no-cache, must-revalidate' }
+    $contentType = switch -Regex ($f.Name) { '\.json$' { 'application/json'; break }; '^RELEASES' { 'text/plain'; break }; '\.(zip|nupkg)$' { 'application/zip'; break }; default { 'application/octet-stream' } }
+    Publish-R2Object -AccountId $AccountId -Bucket $Bucket -FilePath $f.FullName -Immutable:$immutable -CacheControl $cacheControl -ContentType $contentType | Out-Null
     $uploaded++
 }
 Write-Host "✅ R2 アップロード完了: $uploaded ファイル"
@@ -236,7 +240,7 @@ foreach ($artifact in Get-ChildItem $ArtifactsDir -File) {
     $head = Invoke-WebRequest -Uri $verifyUrl -Method Head -TimeoutSec 30
     $remoteLength = [long]($head.Headers['Content-Length'] | Select-Object -First 1)
     $etag = [string]($head.Headers['ETag'] | Select-Object -First 1)
-    # この経路は Wrangler の単一 PUT。R2 の単一パート ETag (MD5) とサイズを照合する。
+    # この経路は R2 API の単一 PUT。R2 の単一パート ETag (MD5) とサイズを照合する。
     # multipart や不明な ETag は同一性を証明できないため停止する。
     $etag = $etag.Trim('"')
     if ($etag -notmatch '^[0-9a-fA-F]{32}$') { throw "単一パートの ETag ではありません: $artifactUrl" }
