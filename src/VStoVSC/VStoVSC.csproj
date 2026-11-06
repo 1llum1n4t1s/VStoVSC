@@ -36,7 +36,7 @@
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.4" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
-    <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
+    <PackageReference Include="MessageBox.Avalonia" Version="12.1.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="SuperLightLogger" Version="1.0.19" />
     <!-- .NET 10 のプロジェクト評価用コンパイル参照。18.9.6 が対応する最新安定版。
