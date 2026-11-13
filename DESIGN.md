@@ -33,7 +33,7 @@ Windows 上で Visual Studio の `.sln` / `.slnx` を読み、ソリューショ
 - **評価 API の互換性**：`Microsoft.Build` は `.sln` 解析と SDK・import・条件式を含むプロジェクト評価のコンパイル参照として必要。正式な .NET 10 に対応する最新安定版の 18.9.6 を維持する。18.10.1 は net11.0 を要求するため、アプリのランタイムを RC へ移行して追従せず、正式 .NET 11 への対応時に再確認する。
 - **更新元の固定**：Settings の更新 base URL は `https://vs2vsc.kagayoi.com` 固定で JSON 設定から差し替えられない。既定チャンネルは `win`。開発実行ではインストール状態の確認により更新をスキップする。
 - **案内と更新ファイルの分離**：Worker は `/` と `/index.html` に HTML を返し、その他は元のリクエストを `fetch(request)` へ委譲する。新旧ドメインのルートを設定し、更新ファイルのレスポンスを加工しない。
-- **ローカル署名と独立した Web 公開**：SimplySign の対話的な接続を必要とするため、アプリ配布はローカルスクリプトで行い、Web のみ GitHub Actions から公開する。配信照合は単一パート ETag の MD5 とサイズを使い、不明な ETag とバージョン付き配布物の不一致は停止する。`-VerifyOnly` は既存成果物のバージョンを確認して公開後処理を再開する。
+- **CI 署名と独立した Web 公開**：アプリ配布は手動起動の GitHub Actions（`release.yml`、Environment `release`）が `scripts/release-local.ps1` を実行して行う。署名は Sigilune が Certum SimplySign のクラウド鍵を signtool `/dlib` で使い、SimplySign Desktop の対話的な接続を要さない。TOTP 登録情報を Secrets に置くため、それを読むのはこのワークフローだけとし、ランナーのセッションは終了時にログアウトする。ローカル実行は検証・再開に残す。Web は従来どおり GitHub Actions から公開する。配信照合は単一パート ETag の MD5 とサイズを使い、不明な ETag とバージョン付き配布物の不一致は停止する。`-VerifyOnly` は既存成果物のバージョンを確認して公開後処理を再開する。
 
 ## 製品ページの配信先
 
