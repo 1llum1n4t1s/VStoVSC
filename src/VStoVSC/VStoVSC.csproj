@@ -31,14 +31,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
-    <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
+    <PackageReference Include="Avalonia" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.6" />
+    <PackageReference Include="MessageBox.Avalonia" Version="12.1.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="SuperLightLogger" Version="1.0.19" />
+    <PackageReference Include="SuperLightLogger" Version="1.0.22" />
     <!-- .NET 10 のプロジェクト評価用コンパイル参照。18.9.6 が対応する最新安定版。
          18.10.1 の .NET 向け資産は net11.0 を要求するため、正式 .NET 11 対応を確認するまで維持する。
          実行時は Locator が検出した MSBuild を使い、パッケージの runtime は同梱しない。 -->
