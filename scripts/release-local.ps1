@@ -1,7 +1,7 @@
 # release-local.ps1 — ローカル署名付き Velopack リリース (Lhamiel テンプレートから横展開)
 #
 # 署名は Sigilune (Certum SimplySign のクラウド鍵を signtool /dlib で使う CLI) で行う。
-# 通常のリリースは GitHub Actions の .github/workflows/release.yml (手動起動・Environment "release") が
+# 通常のリリースは GitHub Actions の .github/workflows/release.yml (release/** への push で起動・Environment "release"。署名・配信の前に回帰テストを通す) が
 # 本スクリプトを実行する。ローカル実行も同じ手順で動き、検証や再開に使う。
 #
 # 前提:
@@ -13,7 +13,7 @@
 # 使い方:
 #   pwsh scripts/release-local.ps1                # フルリリース (build + sign + upload + cleanup)
 #   pwsh scripts/release-local.ps1 -SkipUpload    # ビルド + 署名のみ (アップロードしない動作確認用)
-#   pwsh scripts/release-local.ps1 -VerifyOnly    # 既存成果物で公開後の検証と世代整理を再開
+#   pwsh scripts/release-local.ps1 -VerifyOnly    # 既存成果物でキャッシュ削除と世代整理を再開
 
 [CmdletBinding()]
 param(
@@ -230,35 +230,14 @@ Write-Host "✅ R2 アップロード完了: $uploaded ファイル"
 # 固定名ファイル (Setup.exe / Portable.zip / RELEASES / releases.*.json / assets.*.json) は
 # 毎リリースで中身が変わるのに URL が不変。CDN エッジが旧版を Cache-Control の max-age 分保持するため、
 # パージしないと新規ダウンロード・自動更新が旧バージョンを掴む。アップロード直後に該当 URL をパージして
-# 伝播を確定する。バージョン付き nupkg は URL が一意 (旧キャッシュなし) のためパージ不要。
+# キャッシュ削除を要求する。バージョン付き nupkg は URL が一意 (旧キャッシュなし) のためパージ不要。
 Write-Host '== Cloudflare キャッシュパージ ==' -ForegroundColor Cyan
 $cfHeaders = @{ Authorization = "Bearer $($env:CLOUDFLARE_API_TOKEN)" }
 $zoneName = ([uri]$BaseUrl).Host -replace '^[^.]+\.', ''   # <sub>.kagayoi.com → kagayoi.com (apex)
 $zoneResp = Invoke-RestMethod -Uri "https://api.cloudflare.com/client/v4/zones?name=$zoneName" -Headers $cfHeaders -TimeoutSec 30
 if (-not $zoneResp.success -or @($zoneResp.result).Count -eq 0) { throw "Cloudflare zone '$zoneName' の取得に失敗しました" }
 $zoneId = $zoneResp.result[0].id
-$purgeUrls = @()
-# 配信済みの実物と照合し、古い内容が残る URL だけをパージする。
-foreach ($artifact in Get-ChildItem $ArtifactsDir -File) {
-    $artifactUrl = "$BaseUrl/$($artifact.Name)"
-    Write-Host "  配信ハッシュ確認: $($artifact.Name)"
-    $verifyUrl = "${artifactUrl}?_=$([Guid]::NewGuid().ToString('N'))"
-    $head = Invoke-WebRequest -Uri $verifyUrl -Method Head -TimeoutSec 30
-    $remoteLength = [long]($head.Headers['Content-Length'] | Select-Object -First 1)
-    $etag = [string]($head.Headers['ETag'] | Select-Object -First 1)
-    # この経路は R2 API の単一 PUT。R2 の単一パート ETag (MD5) とサイズを照合する。
-    # multipart や不明な ETag は同一性を証明できないため停止する。
-    $etag = $etag.Trim('"')
-    if ($etag -notmatch '^[0-9a-fA-F]{32}$') { throw "単一パートの ETag ではありません: $artifactUrl" }
-    $matches = $remoteLength -eq $artifact.Length -and $etag -eq (Get-FileHash $artifact.FullName -Algorithm MD5).Hash
-    if ($matches) {
-        Write-Host "  ✅ サイズと ETag (MD5) が一致: $($artifact.Name)"
-    } elseif ($artifact.Name -like '*.nupkg') {
-        throw "バージョン付き配布物が一致しません: $artifactUrl"
-    } else {
-        $purgeUrls += $artifactUrl
-    }
-}
+$purgeUrls = @(Get-ChildItem $ArtifactsDir -File | Where-Object { $_.Name -notlike '*.nupkg' } | ForEach-Object { "$BaseUrl/$($_.Name)" })
 if ($purgeUrls.Count -gt 0) {
     $purgeBody = [PSCustomObject]@{ files = @($purgeUrls) } | ConvertTo-Json -Compress
     $purgeResp = Invoke-RestMethod -Method Post -Uri "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache" `
@@ -270,43 +249,7 @@ if ($purgeUrls.Count -gt 0) {
     Write-Host '  パージ対象なし'
 }
 
-# ---- 3. 配信確認 (manifest 完全一致リトライ方式) ----
-# 旧 CI の Codex #3312267284 対応を踏襲: 単純な HTTP 200 だけだと CDN/edge が古い
-# manifest を返している間に cleanup が走り、旧 manifest を取得したクライアントが
-# 直後に消える .nupkg を取りに行って 404 失敗する race condition がある。
-# ローカルアップロード済の manifest と完全一致するまでリトライしてから次へ進む。
-Write-Host '== 配信確認 (manifest 伝播待機) ==' -ForegroundColor Cyan
-foreach ($runtime in $Runtimes) {
-    $channel = $RuntimeMatrix[$runtime].Channel
-    $url = "$BaseUrl/releases.$channel.json"
-    $localManifest = Get-Content (Join-Path $ArtifactsDir "releases.$channel.json") -Raw |
-        ConvertFrom-Json | ConvertTo-Json -Depth 100 -Compress
-
-    # 最大 90 秒 (18 回 × 5 秒) 待つ。R2 + Cloudflare の伝播は通常 ~10 秒だが余裕を持たせる。
-    $maxAttempts = 18
-    $matched = $false
-    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-        # Cache を bypass するためクエリ文字列でユニーク化
-        $resp = Invoke-WebRequest -Uri "${url}?_=$([Guid]::NewGuid().ToString('N'))" `
-            -Headers @{ 'Cache-Control' = 'no-cache' } -TimeoutSec 30
-        # R2 は text 系でない Content-Type で返すことがあり、その場合 .Content は byte[] になる
-        $raw = $resp.Content
-        if ($raw -is [byte[]]) { $raw = [System.Text.Encoding]::UTF8.GetString($raw) }
-        $remoteManifest = $raw | ConvertFrom-Json | ConvertTo-Json -Depth 100 -Compress
-        if ($localManifest -eq $remoteManifest) {
-            Write-Host "  ✅ $url がローカル manifest と一致 (attempt $attempt)"
-            $matched = $true
-            break
-        }
-        Write-Host "  ⚠️ remote manifest がまだ古い (attempt $attempt / $maxAttempts)、5 秒待機..."
-        Start-Sleep -Seconds 5
-    }
-    if (-not $matched) {
-        throw "remote manifest が $($maxAttempts * 5) 秒以内にローカルと一致しませんでした。race 回避のため cleanup を中止します: $url"
-    }
-}
-
-# ---- 4. 旧バージョン nupkg のクリーンアップ (Aggressive 戦略) ----
+# ---- 3. 旧バージョン nupkg のクリーンアップ (Aggressive 戦略) ----
 # ローカル artifacts の manifest (= 今アップロードしたものと同一) から keep set を作り、
 # R2 上の「.nupkg かつ manifest 外」だけを削除する。固定ファイル名 (Setup.exe /
 # Portable.zip / RELEASES* / assets.*.json / releases.*.json) は対象外なので安全。
@@ -319,10 +262,31 @@ foreach ($m in $manifests) {
         if ($asset.FileName) { $keep[$asset.FileName] = $true }
     }
 }
-Write-Host "  保持対象 nupkg: $($keep.Count) 件"
-
 $api = "https://api.cloudflare.com/client/v4/accounts/$AccountId/r2/buckets/$Bucket"
 $headers = @{ Authorization = "Bearer $($env:CLOUDFLARE_API_TOKEN)" }
+
+if ($VerifyOnly) {
+    # 再開時のローカルmanifestは配信中とは限らないため、R2正本の参照先も清掃から保護する。
+    $originResponse = Invoke-WebRequest -Uri "$api/objects/releases.win.json" -Headers $headers -TimeoutSec 30 -MaximumRedirection 0
+    if ($originResponse.StatusCode -ne 200) { throw '配信中manifestを取得できないためcleanupを中止します' }
+    $originContent = $originResponse.Content
+    if ($originContent -is [byte[]]) { $originContent = [System.Text.Encoding]::UTF8.GetString($originContent) }
+    $originManifest = $originContent | ConvertFrom-Json -ErrorAction Stop
+    if (-not $originManifest -or -not $originManifest.PSObject.Properties['Assets'] -or
+        $null -eq $originManifest.Assets -or @($originManifest.Assets).Count -eq 0) {
+        throw '配信中manifestのAssetsが空または不正なためcleanupを中止します'
+    }
+    foreach ($asset in $originManifest.Assets) {
+        $fileName = $asset.FileName
+        if ($fileName -isnot [string] -or [string]::IsNullOrWhiteSpace($fileName) -or
+            $fileName -in @('.', '..') -or $fileName.IndexOfAny([IO.Path]::GetInvalidFileNameChars()) -ge 0 -or
+            [IO.Path]::GetFileName($fileName) -cne $fileName) {
+            throw '配信中manifestのFileNameが不正なためcleanupを中止します'
+        }
+        $keep[$fileName] = $true
+    }
+}
+Write-Host "  保持対象の参照ファイル: $($keep.Count) 件"
 
 $allKeys = [System.Collections.Generic.List[string]]::new()
 $cursor = ''
