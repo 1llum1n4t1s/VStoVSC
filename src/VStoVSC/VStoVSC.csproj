@@ -31,23 +31,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
-    <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
+    <PackageReference Include="Avalonia" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.6" />
+    <PackageReference Include="MessageBox.Avalonia" Version="12.1.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="SuperLightLogger" Version="1.0.19" />
-    <!-- .NET 10 のプロジェクト評価用コンパイル参照。18.9.6 が対応する最新安定版。
-         18.10.1 の .NET 向け資産は net11.0 を要求するため、正式 .NET 11 対応を確認するまで維持する。
+    <PackageReference Include="SuperLightLogger" Version="1.0.22" />
+    <!-- .NET 11 のプロジェクト評価用コンパイル参照。18.12.2 は net11.0 向け資産を持つ最新安定版で、
+         .NET 11 SDK 11.0.100 同梱の MSBuild (18.12.2) と一致する。
+         18.10.1 以降は net11.0 を要求するため、.NET 10 時代は 18.9.6 に固定していた。
          実行時は Locator が検出した MSBuild を使い、パッケージの runtime は同梱しない。 -->
-    <PackageReference Include="Microsoft.Build" Version="18.9.6" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build" Version="18.12.2" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
     <!-- Velopack は VelopackUpdateDialog.Avalonia 経由の推移参照に一本化（Lhamiel パターン）。
          旧 dialog 1.0.3 は NuGet.Versioning を参照しており、Velopack 1.0.1 がそれを配布しないため
          「アップデート確認」が FileNotFoundException で失敗していた。1.0.4 で参照撤去済み。 -->
-    <PackageReference Include="VelopackUpdateDialog.Avalonia" Version="1.0.21" />
+    <PackageReference Include="VelopackUpdateDialog.Avalonia" Version="1.0.22" />
   </ItemGroup>
 
   <ItemGroup>
