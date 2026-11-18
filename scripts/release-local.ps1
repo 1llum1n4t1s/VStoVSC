@@ -1,7 +1,7 @@
 # release-local.ps1 — ローカル署名付き Velopack リリース (Lhamiel テンプレートから横展開)
 #
 # 署名は Sigilune (Certum SimplySign のクラウド鍵を signtool /dlib で使う CLI) で行う。
-# 通常のリリースは GitHub Actions の .github/workflows/release.yml (release/** への push で起動・Environment "release"。署名・配信の前に回帰テストを通す) が
+# 通常のリリースは GitHub Actions の .github/workflows/release.yml (軽量タグ v<版> の push で起動・Environment "release"。署名・配信の前に回帰テストを通す) が
 # 本スクリプトを実行する。ローカル実行も同じ手順で動き、検証や再開に使う。
 #
 # 前提:
